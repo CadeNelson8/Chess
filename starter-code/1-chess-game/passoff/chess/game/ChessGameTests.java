@@ -26,6 +26,7 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
 
         try {
             // Different team turn
+            // test comment
             ChessGame game1 = new ChessGame();
             game1.setTeamTurn(ChessGame.TeamColor.BLACK);
             differentGames.add(game1);
