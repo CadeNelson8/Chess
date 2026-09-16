@@ -59,7 +59,7 @@ public class ChessMove {
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
-
+    //chess position worked, committing
     @Override
     public int hashCode() {
         return Objects.hash(startPosition, endPosition, promotionPiece);
