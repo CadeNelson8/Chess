@@ -1,8 +1,6 @@
 package chess;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -68,11 +66,73 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+    public boolean inBounds(int[] move, ChessPosition myPosition){
+        int nowR = myPosition.getRow();
+        int nowC = myPosition.getColumn();
+        if(1 <= (nowR + move[0]) && (nowR + move[0]) <= 8 && 1 <= (nowC + move[1]) && (nowC + move[1]) <= 8){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean blocked(ChessPosition myPosition, ChessPosition newPosition, ChessBoard board){
+        ChessPiece new_piece = board.getPiece(newPosition);
+        ChessPiece piece = board.getPiece(myPosition);
+        if(new_piece==null){
+            return false;
+        }
+        if(new_piece.getTeamColor()==piece.getTeamColor()){
+            return true;
+        }
+        return true;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
+        int [][] moves;
+        boolean repeatable;
         if(piece.getPieceType() == PieceType.BISHOP){
-            return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1,8),null));
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+            repeatable = true;
         }
-        return List.of();
+        else if(piece.getPieceType() == PieceType.ROOK){
+            moves = new int[][]{{0,1},{0,-1},{-1,0},{1,0}};
+            repeatable = true;
+        }
+        else if(piece.getPieceType() == PieceType.KNIGHT){
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+            repeatable = true;
+        }
+        else if(piece.getPieceType() == PieceType.KING){
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{0,1},{0,-1},{-1,0},{1,0}};
+            repeatable = false;
+        }
+        else if(piece.getPieceType() == PieceType.QUEEN){
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+            repeatable = true;
+        }
+        else {
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+            repeatable = true;
+        }
+
+        Collection<ChessMove> list = new ArrayList<>();
+        if(!repeatable) {
+            for (int[] move : moves) {
+                if(inBounds(move, myPosition)){
+                    ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
+                    if (!blocked(myPosition, p, board)){
+                        ChessMove m = new ChessMove(myPosition, p, null);
+                        list.add(m);
+                    }
+
+                }
+
+            }
+        }
+
+
+        return list;
     }
 }
