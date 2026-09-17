@@ -82,10 +82,12 @@ public class ChessPiece {
         if(new_piece==null){
             return false;
         }
-        if(new_piece.getTeamColor()==piece.getTeamColor()){
+        else if(new_piece.getTeamColor()==piece.getTeamColor()){
             return true;
         }
-        return true;
+        else {
+            return false;
+        }
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
@@ -101,8 +103,8 @@ public class ChessPiece {
             repeatable = true;
         }
         else if(piece.getPieceType() == PieceType.KNIGHT){
-            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
-            repeatable = true;
+            moves = new int[][]{{2,1},{1,-2},{-2,1},{-2,-1}};
+            repeatable = false;
         }
         else if(piece.getPieceType() == PieceType.KING){
             moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{0,1},{0,-1},{-1,0},{1,0}};
