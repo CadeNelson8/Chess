@@ -90,6 +90,22 @@ public class ChessPiece {
         }
     }
 
+    public int[] update_move(int[] move){
+        if(move[0] < 0){
+            move[0] -= 1;
+        }
+        if(move[1] < 0){
+            move[1] -= 1;
+        }
+        if(move[0] > 0){
+            move[0] += 1;
+        }
+        if(move[0] > 0){
+            move[0] += 1;
+        }
+        return move;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         int [][] moves;
@@ -103,7 +119,7 @@ public class ChessPiece {
             repeatable = true;
         }
         else if(piece.getPieceType() == PieceType.KNIGHT){
-            moves = new int[][]{{2,1},{1,-2},{-2,1},{-2,-1}};
+            moves = new int[][]{{-2,1},{-2,-1},{-1,2},{-1,-2},{1,-2},{1,2},{2,1},{2,-1}};
             repeatable = false;
         }
         else if(piece.getPieceType() == PieceType.KING){
@@ -115,8 +131,8 @@ public class ChessPiece {
             repeatable = true;
         }
         else {
-            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
-            repeatable = true;
+            moves = new int[][]{{0,1},{1,-1},{1,1}};
+            repeatable = false;
         }
 
         Collection<ChessMove> list = new ArrayList<>();
@@ -130,7 +146,28 @@ public class ChessPiece {
                     }
 
                 }
-
+            }
+        }
+        else{
+            for (int[] move : moves) {
+                boolean can_move = true;
+                ChessPosition temp = myPosition;
+                while(can_move){
+                    ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
+                    if(inBounds(move, temp)){
+                        if (!blocked(temp, p, board)){
+                            temp = new ChessPosition(temp.getRow()+move[0], temp.getColumn()+move[1]);
+                            ChessMove m = new ChessMove(myPosition, temp, null);
+                            list.add(m);
+                        }
+                        else{
+                            can_move=false;
+                        }
+                    }
+                    else{
+                        can_move=false;
+                    }
+                }
             }
         }
 
