@@ -90,6 +90,15 @@ public class ChessPiece {
         }
     }
 
+    public ChessPiece.PieceType getPromotionPiece(ChessPosition p){
+        if(p.getRow()==0||p.getRow()==8){
+            return PieceType.QUEEN;
+        }
+        else {
+            return null;
+        }
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         int [][] moves;
@@ -115,12 +124,69 @@ public class ChessPiece {
             repeatable = true;
         }
         else {
-            moves = new int[][]{{0,1},{1,-1},{1,1}};
+            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                moves = new int[][]{{1,0},{1,-1},{1,1}};
+            }
+            else{
+                moves = new int[][]{{-1,0},{-1,-1},{-1,1}};
+            }
             repeatable = false;
         }
 
         Collection<ChessMove> list = new ArrayList<>();
-        if(!repeatable) {
+        if(piece.getPieceType() == PieceType.PAWN){
+            boolean doublemove = false;
+            if(piece.getTeamColor()== ChessGame.TeamColor.WHITE && myPosition.getRow()==2){
+                doublemove = true;
+            }
+            if(piece.getTeamColor()== ChessGame.TeamColor.BLACK && myPosition.getRow()==7){
+                doublemove = true;
+            }
+            for(int[] move : moves) {
+                if(inBounds(move, myPosition)) {
+                    ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
+                    if (move[1] == 0) {
+                        if (board.getPiece(p) == null) {
+                            if(p.getRow()==8 || p.getRow() == 1){
+                                ChessMove m = new ChessMove(myPosition, p, PieceType.QUEEN);
+                                list.add(m);
+                                ChessMove n = new ChessMove(myPosition, p, PieceType.ROOK);
+                                list.add(n);
+                                ChessMove o = new ChessMove(myPosition, p, PieceType.BISHOP);
+                                list.add(o);
+                                ChessMove q = new ChessMove(myPosition, p, PieceType.KNIGHT);
+                                list.add(q);
+                            }else{
+                                ChessMove m = new ChessMove(myPosition, p, null);
+                                list.add(m);
+                            }
+                            ChessPosition d = new ChessPosition(myPosition.getRow() + move[0] + move[0], myPosition.getColumn() + move[1] + move[1]);
+                            if(doublemove && board.getPiece(d) == null){
+                                ChessMove n = new ChessMove(myPosition, d, null);
+                                list.add(n);
+                            }
+                        }
+                    } else {
+                        if (board.getPiece(p) != null && board.getPiece(p).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                            if(p.getRow()==8 || p.getRow() == 1){
+                                ChessMove m = new ChessMove(myPosition, p, PieceType.QUEEN);
+                                list.add(m);
+                                ChessMove n = new ChessMove(myPosition, p, PieceType.ROOK);
+                                list.add(n);
+                                ChessMove o = new ChessMove(myPosition, p, PieceType.BISHOP);
+                                list.add(o);
+                                ChessMove q = new ChessMove(myPosition, p, PieceType.KNIGHT);
+                                list.add(q);
+                            }else{
+                                ChessMove m = new ChessMove(myPosition, p, null);
+                                list.add(m);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(!repeatable) {
             for (int[] move : moves) {
                 if(inBounds(move, myPosition)){
                     ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
