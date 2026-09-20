@@ -90,22 +90,6 @@ public class ChessPiece {
         }
     }
 
-    public int[] update_move(int[] move){
-        if(move[0] < 0){
-            move[0] -= 1;
-        }
-        if(move[1] < 0){
-            move[1] -= 1;
-        }
-        if(move[0] > 0){
-            move[0] += 1;
-        }
-        if(move[0] > 0){
-            move[0] += 1;
-        }
-        return move;
-    }
-
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         int [][] moves;
@@ -127,7 +111,7 @@ public class ChessPiece {
             repeatable = false;
         }
         else if(piece.getPieceType() == PieceType.QUEEN){
-            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{0,1},{0,-1},{-1,0},{1,0}};
             repeatable = true;
         }
         else {
@@ -144,28 +128,32 @@ public class ChessPiece {
                         ChessMove m = new ChessMove(myPosition, p, null);
                         list.add(m);
                     }
-
                 }
             }
         }
         else{
-            for (int[] move : moves) {
+            for(int[] move : moves){
                 boolean can_move = true;
                 ChessPosition temp = myPosition;
                 while(can_move){
-                    ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
                     if(inBounds(move, temp)){
-                        if (!blocked(temp, p, board)){
-                            temp = new ChessPosition(temp.getRow()+move[0], temp.getColumn()+move[1]);
-                            ChessMove m = new ChessMove(myPosition, temp, null);
+                        ChessPosition p = new ChessPosition(temp.getRow() + move[0], temp.getColumn() + move[1]);
+                        if(board.getPiece(p)==null){
+                            ChessMove m = new ChessMove(myPosition, p, null);
                             list.add(m);
+                            temp = new ChessPosition(temp.getRow()+move[0], temp.getColumn()+move[1]);
                         }
-                        else{
+                        else if(board.getPiece(p).getTeamColor()==board.getPiece(myPosition).getTeamColor()){
+                            can_move=false;
+                        }
+                        else if(board.getPiece(p).getTeamColor()!=board.getPiece(myPosition).getTeamColor()){
+                            ChessMove m = new ChessMove(myPosition, p, null);
+                            list.add(m);
                             can_move=false;
                         }
                     }
                     else{
-                        can_move=false;
+                        can_move = false;
                     }
                 }
             }
