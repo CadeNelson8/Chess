@@ -56,12 +56,7 @@ public class ChessBoard {
         return Arrays.deepHashCode(board);
     }
 
-    @Override
-    public String toString() {
-        return "ChessBoard{" +
-                "board=" + Arrays.toString(board) +
-                '}';
-    }
+
 
     /**
      * Sets the board to the default starting board

@@ -224,8 +224,6 @@ public class ChessPiece {
                 }
             }
         }
-
-
         return list;
     }
 }
