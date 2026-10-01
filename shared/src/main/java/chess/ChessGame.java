@@ -224,7 +224,19 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         //if isInCheck is false and all other moves are blocked or would be in check, return true
-        return true;
+        if(isInCheck(teamColor)){
+            return false;
+        }
+        Collection<ChessPosition> ownPlaces = getOwnPlaces(teamColor);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        for (ChessPosition place : ownPlaces){
+            Collection<ChessMove> thisMoves= validMoves(place);
+            validMoves.addAll(thisMoves);
+        }
+        if(validMoves.isEmpty()){
+            return true;
+        }
+        return false;
     }
 
     /**
