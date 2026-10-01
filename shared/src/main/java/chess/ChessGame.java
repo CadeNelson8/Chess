@@ -203,10 +203,15 @@ public class ChessGame {
         if(!isInCheck(teamColor)){
             return false;
         }
-        ChessPosition kingpos = getKingPosition(teamColor);
-        ChessPiece king = board.getPiece(kingpos);
-        Collection<ChessMove> kingmoves = king.pieceMoves(board, kingpos);
-
+        Collection<ChessPosition> ownPlaces = getOwnPlaces(teamColor);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        for (ChessPosition place : ownPlaces){
+            Collection<ChessMove> thisMoves= validMoves(place);
+            validMoves.addAll(thisMoves);
+        }
+        if(validMoves.isEmpty()){
+            return true;
+        }
         return false;
     }
 
