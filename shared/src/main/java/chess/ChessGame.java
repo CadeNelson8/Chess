@@ -54,12 +54,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //ChessBoard boardcopy = new ChessBoard(board);
-
         ChessPiece m = board.getPiece(startPosition);
         Collection<ChessMove> list = m.pieceMoves(board, startPosition);
         TeamColor color = m.getTeamColor();
         board.removePiece(startPosition);
+        ChessBoard boardcopy = new ChessBoard(board);
         Collection<ChessMove> validMoves = new ArrayList<>();
         for (ChessMove move : list){
             //if move would leave king in check, remove from list
@@ -67,8 +66,10 @@ public class ChessGame {
             if(!isInCheckHelper(color,board)){
                 validMoves.add(move);
             }
-            board.removePiece(move.getEndPosition());
+            ChessBoard backup = new ChessBoard(boardcopy);
+            board = backup;
         }
+        board.addPiece(startPosition, m);
         return validMoves;
     }
 
@@ -151,7 +152,27 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         //if isInCheck is true and all other moves are blocked or would be in check, return true
-        return true;
+        if(!isInCheck(teamColor)){
+            return false;
+        }
+        ChessPosition kingpos = getKingPosition(teamColor);
+        ChessPiece king = board.getPiece(kingpos);
+        Collection<ChessMove> kingmoves = board.getPiece(kingpos).pieceMoves(board, kingpos);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        board.removePiece(kingpos);
+        for (ChessMove move : kingmoves){
+            board.addPiece(move.getEndPosition(), king);
+            if(!isInCheck(teamColor) || board.getPiece(move.getEndPosition()).getTeamColor()==teamColor){
+                validMoves.add(move);
+            }
+            board.removePiece(move.getEndPosition());
+        }
+        if(validMoves.isEmpty()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
