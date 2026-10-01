@@ -56,7 +56,25 @@ public class ChessBoard {
         return Arrays.deepHashCode(board);
     }
 
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "board=" + Arrays.toString(board) +
+                '}';
+    }
 
+    public ChessBoard(ChessBoard other){
+         board = new ChessPiece[8][8];
+         for (int i =0; i<8;i++){
+             for (int k = 0; k<8;k++){
+                ChessPiece p =other.board[i][k];
+                if(p!=null){
+                    ChessPiece piece = new ChessPiece(p.getTeamColor(), p.getPieceType());
+                    board[i][k] = piece;
+                }
+             }
+         }
+    }
 
     /**
      * Sets the board to the default starting board
