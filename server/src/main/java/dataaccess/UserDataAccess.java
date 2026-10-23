@@ -19,5 +19,9 @@ public class UserDataAccess {
         return map.containsKey(username);
     }
 
+    public boolean passwordTaken(String password){
+        return map.containsValue(password);
+    }
+
 
 }

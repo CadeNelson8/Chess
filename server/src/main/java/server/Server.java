@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
+import dataaccess.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -20,15 +21,14 @@ public class Server {
         this.userService = userService;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-                javalin.delete("/db", Server::clearDb);
-        //javalin = Javalin.create(config -> config.staticFiles.add("web"));
-           // javalin.delete("/user", Server::register);
-
+                javalin.delete("/db", this::clearDb);
+            javalin.post("/user", this::register);
+            javalin.post("/session",this::login);
         // Register your endpoints and exception handlers here.
 
     }
 
-    private static void clearDb(@NotNull Context ctx){
+    private void clearDb(@NotNull Context ctx){
         var r = Map.of();
         var json = new Gson();
         ctx.json(json.toJson(r));
@@ -55,12 +55,21 @@ public class Server {
 
     public void login(@NotNull Context ctx){
         var user = new Gson().fromJson(ctx.body(), UserData.class);
-        if (user.username()==null || user.password() == null || user.email() == null){
+        if (user.username()==null || user.password() == null){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
         }
-        //AuthData authData = userService.loginRequest(user);
+        try {
+            AuthData authData = userService.loginRequest(user);
+            ctx.status(200);
+            ctx.result(new Gson().toJson(authData));
+        }
+        catch(UnauthorizedException e){
+            ctx.status(401);
+            ctx.result("{\"message\": \"Error: unauthorized\"}");
+        }
+
     }
 
 

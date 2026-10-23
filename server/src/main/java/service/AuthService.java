@@ -17,4 +17,5 @@ public class AuthService {
         authStorage.addAuth(authData);
         return authData;
     }
+
 }

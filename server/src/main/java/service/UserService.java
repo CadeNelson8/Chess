@@ -1,31 +1,36 @@
 package service;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.UnauthorizedException;
 import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
 
 public class UserService {
-    private final UserDataAccess userDA;
+    private final UserDataAccess userStorage;
     private final AuthService authService;
 
     public UserService(UserDataAccess userDA, AuthService authService){
-        this.userDA = userDA;
+        this.userStorage = userDA;
         this.authService = authService;
     }
 
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{
-        if(userDA.userTaken(user.username())){
+        if(userStorage.userTaken(user.username())){
             throw new AlreadyTakenException("Error: User already taken");
         }
-        userDA.addUser(user);
+        userStorage.addUser(user);
         AuthData var = authService.createAuth(user);
         return var;
     }
 
-    //public AuthData loginRequest(UserData user){
-
-
-    //}
+    public AuthData loginRequest(UserData user) throws UnauthorizedException {
+        if(!userStorage.userTaken(user.username()) || !userStorage.userTaken(user.password())){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        UserData real_user = userStorage.getUser(user.username());
+        AuthData var = authService.createAuth(real_user);
+        return var;
+    }
 
 }
