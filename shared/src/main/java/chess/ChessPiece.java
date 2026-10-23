@@ -165,6 +165,7 @@ public class ChessPiece {
                     } else {
                         if (board.getPiece(p) != null && board.getPiece(p).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
                             promotePiece(list, p, myPosition);
+
                         }
                     }
                 }
