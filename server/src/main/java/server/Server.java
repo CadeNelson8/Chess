@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import model.UserData;
 
 import java.util.Map;
 
@@ -27,10 +28,13 @@ public class Server {
     }
 
     //register method
-    //public String register(){
+    public String register(String username, String password, String email){
+        var user = new UserData(username, password, email);
+        //check if user already taken
+        
 
-
-    //}
+        return username;
+    }
 
 
     //

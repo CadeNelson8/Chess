@@ -122,7 +122,7 @@ public class ChessGame {
         for(int i = 1; i < 9; i++){
             for(int k = 1; k < 9; k++){
                 ChessPosition c = new ChessPosition(i, k);
-                if(board.getPiece(c)!=null && board.getPiece(c).getPieceType()== ChessPiece.PieceType.KING && board.getPiece(c).getTeamColor() == teamColor){
+                if(board.getPiece(c)!=null&&board.getPiece(c).getPieceType()==ChessPiece.PieceType.KING&&board.getPiece(c).getTeamColor()==teamColor){
                     return c;
                 }
             }
@@ -176,22 +176,6 @@ public class ChessGame {
         }
         return false;
     }
-
-    public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingpos = getKingPosition(teamColor);
-        //iterate through all enemy chess pieces. If one of them has kingpos in their move list, return true. False otherwise
-        Collection <ChessPosition> enemyPlaces = getEnemyPlaces(teamColor);
-        for (ChessPosition place : enemyPlaces){
-            Collection<ChessMove> moves = board.getPiece(place).pieceMoves(board, place);
-            for(ChessMove move : moves){
-                if(move.getEndPosition().equals(kingpos)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * Determines if the given team is in checkmate
      *
@@ -200,7 +184,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         //if isInCheck is true and all other moves are blocked or would be in check, return true
-        if(!isInCheck(teamColor)){
+        if(!isInCheckHelper(teamColor, board)){
             return false;
         }
         Collection<ChessPosition> ownPlaces = getOwnPlaces(teamColor);
@@ -224,7 +208,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         //if isInCheck is false and all other moves are blocked or would be in check, return true
-        if(isInCheck(teamColor)){
+        if(isInCheckHelper(teamColor, board)){
             return false;
         }
         Collection<ChessPosition> ownPlaces = getOwnPlaces(teamColor);

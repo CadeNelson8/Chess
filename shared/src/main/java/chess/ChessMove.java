@@ -57,7 +57,11 @@ public class ChessMove {
             return false;
         }
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+        var e = endPosition;
+        var mE = chessMove.endPosition;
+        var s = startPosition;
+        var mS = chessMove.startPosition;
+        return Objects.equals(s, mS) && Objects.equals(e, mE) && promotionPiece == chessMove.promotionPiece;
     }
     //chess position worked, committing
     @Override
