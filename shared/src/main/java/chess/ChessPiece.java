@@ -155,20 +155,7 @@ public class ChessPiece {
                     ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
                     if (move[1] == 0) {
                         if (board.getPiece(p) == null) {
-                            if(p.getRow()==8 || p.getRow() == 1){
-                                ChessMove m = new ChessMove(myPosition, p, PieceType.QUEEN);
-                                list.add(m);
-                                ChessMove n = new ChessMove(myPosition, p, PieceType.ROOK);
-                                list.add(n);
-                                ChessMove o = new ChessMove(myPosition, p, PieceType.BISHOP);
-                                list.add(o);
-                                ChessMove q = new ChessMove(myPosition, p, PieceType.KNIGHT);
-                                list.add(q);
-
-                            }else{
-                                ChessMove m = new ChessMove(myPosition, p, null);
-                                list.add(m);
-                            }
+                            promotePiece(list, p, myPosition);
                             ChessPosition d = new ChessPosition(myPosition.getRow() + move[0] + move[0], myPosition.getColumn() + move[1] + move[1]);
                             if(doublemove && board.getPiece(d) == null){
                                 ChessMove n = new ChessMove(myPosition, d, null);
@@ -177,20 +164,8 @@ public class ChessPiece {
                         }
                     } else {
                         if (board.getPiece(p) != null && board.getPiece(p).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                            if(p.getRow()==8 || p.getRow() == 1){
-                                ChessMove m = new ChessMove(myPosition, p, PieceType.QUEEN);
-                                list.add(m);
-                                ChessMove n = new ChessMove(myPosition, p, PieceType.ROOK);
-                                list.add(n);
-                                ChessMove o = new ChessMove(myPosition, p, PieceType.BISHOP);
-                                list.add(o);
-                                ChessMove q = new ChessMove(myPosition, p, PieceType.KNIGHT);
-                                list.add(q);
+                            promotePiece(list, p, myPosition);
 
-                            }else{
-                                ChessMove m = new ChessMove(myPosition, p, null);
-                                list.add(m);
-                            }
                         }
                     }
                 }

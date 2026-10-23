@@ -27,10 +27,10 @@ public class Server {
     }
 
     //register method
-    public String register(){
+    //public String register(){
 
 
-    }
+    //}
 
 
     //
