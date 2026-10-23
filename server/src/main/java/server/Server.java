@@ -26,6 +26,15 @@ public class Server {
         ctx.json(json.toJson(r));
     }
 
+    //register method
+    public String register(){
+
+
+    }
+
+
+    //
+
     public int run(int desiredPort) {
         javalin.start(desiredPort);
         return javalin.port();

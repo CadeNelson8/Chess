@@ -1,4 +1,6 @@
 package model;
+import chess.ChessGame;
 
-public class GameData {
+record GameData(int GameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+
 }
