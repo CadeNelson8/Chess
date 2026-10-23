@@ -23,11 +23,9 @@ public class UserService {
         return var;
     }
 
-    public void getUser(){
+    //public AuthData loginRequest(UserData user){
 
-    }
 
-    public void createUser(){
+    //}
 
-    }
 }

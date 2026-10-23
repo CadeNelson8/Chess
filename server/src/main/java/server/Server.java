@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
-import dataaccess.UserDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -21,12 +20,12 @@ public class Server {
         this.userService = userService;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-
-
-
-        javalin.delete("/db", Server::clearDb);
+                javalin.delete("/db", Server::clearDb);
+        //javalin = Javalin.create(config -> config.staticFiles.add("web"));
+           // javalin.delete("/user", Server::register);
 
         // Register your endpoints and exception handlers here.
+
     }
 
     private static void clearDb(@NotNull Context ctx){
@@ -35,7 +34,6 @@ public class Server {
         ctx.json(json.toJson(r));
     }
 
-    //register method
     public void register(@NotNull Context ctx){
         var user = new Gson().fromJson(ctx.body(), UserData.class);
         if (user.username()==null || user.password() == null || user.email() == null){
@@ -53,6 +51,16 @@ public class Server {
             ctx.result("{\"message\": \"Error: already taken\"}");
         }
 
+    }
+
+    public void login(@NotNull Context ctx){
+        var user = new Gson().fromJson(ctx.body(), UserData.class);
+        if (user.username()==null || user.password() == null || user.email() == null){
+            ctx.status(400);
+            ctx.result("{\"message\": \"Error: bad request\"}");
+            return;
+        }
+        //AuthData authData = userService.loginRequest(user);
     }
 
 
