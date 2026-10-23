@@ -15,9 +15,6 @@ public class UserService {
     }
 
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{
-        //check if already taken
-        //if not, create User and Auth
-        //return AuthData
         if(userDA.userTaken(user.username())){
             throw new AlreadyTakenException("Error: User already taken");
         }
