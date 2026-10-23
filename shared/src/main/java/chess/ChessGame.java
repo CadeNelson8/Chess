@@ -3,9 +3,6 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import chess.ChessPiece;
-
-import chess.ChessBoard;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -175,6 +172,10 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    public boolean isInCheck(TeamColor teamColor){
+        return isInCheckHelper(teamColor, board);
     }
     /**
      * Determines if the given team is in checkmate
