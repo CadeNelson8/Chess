@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,5 +18,9 @@ public class AuthDataAccess {
 
     public boolean authTaken(AuthData authToken){
         return map.containsValue(authToken);
+    }
+
+    public void clear(){
+        map.clear();
     }
 }

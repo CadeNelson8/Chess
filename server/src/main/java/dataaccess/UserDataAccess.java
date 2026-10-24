@@ -23,5 +23,8 @@ public class UserDataAccess {
         return map.containsValue(password);
     }
 
+    public void clear(){
+        map.clear();
+    }
 
 }

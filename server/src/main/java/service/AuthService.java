@@ -21,4 +21,8 @@ public class AuthService {
     public AuthDataAccess getAuthStorage(){
         return authStorage;
     }
+
+    public void clearRequest(){
+        authStorage.clear();
+    }
 }

@@ -115,6 +115,32 @@ public class ChessPiece {
         }
     }
 
+    public void manyMoves(Collection<ChessMove> list, ChessPosition myPosition, ChessBoard board, int[] move){
+        boolean can_move = true;
+        ChessPosition temp = myPosition;
+        while(can_move){
+            if(inBounds(move, temp)){
+                ChessPosition p = new ChessPosition(temp.getRow() + move[0], temp.getColumn() + move[1]);
+                if(board.getPiece(p)==null){
+                    ChessMove m = new ChessMove(myPosition, p, null);
+                    list.add(m);
+                    temp = new ChessPosition(temp.getRow()+move[0], temp.getColumn()+move[1]);
+                }
+                else if(board.getPiece(p).getTeamColor()==board.getPiece(myPosition).getTeamColor()){
+                    can_move=false;
+                }
+                else if(board.getPiece(p).getTeamColor()!=board.getPiece(myPosition).getTeamColor()){
+                    ChessMove m = new ChessMove(myPosition, p, null);
+                    list.add(m);
+                    can_move=false;
+                }
+            }
+            else{
+                can_move = false;
+            }
+        }
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         int [][] moves;
@@ -181,29 +207,7 @@ public class ChessPiece {
         }
         else{
             for(int[] move : moves){
-                boolean can_move = true;
-                ChessPosition temp = myPosition;
-                while(can_move){
-                    if(inBounds(move, temp)){
-                        ChessPosition p = new ChessPosition(temp.getRow() + move[0], temp.getColumn() + move[1]);
-                        if(board.getPiece(p)==null){
-                            ChessMove m = new ChessMove(myPosition, p, null);
-                            list.add(m);
-                            temp = new ChessPosition(temp.getRow()+move[0], temp.getColumn()+move[1]);
-                        }
-                        else if(board.getPiece(p).getTeamColor()==board.getPiece(myPosition).getTeamColor()){
-                            can_move=false;
-                        }
-                        else if(board.getPiece(p).getTeamColor()!=board.getPiece(myPosition).getTeamColor()){
-                            ChessMove m = new ChessMove(myPosition, p, null);
-                            list.add(m);
-                            can_move=false;
-                        }
-                    }
-                    else{
-                        can_move = false;
-                    }
-                }
+                manyMoves(list, myPosition, board, move);
             }
         }
         return list;

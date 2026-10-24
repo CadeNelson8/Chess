@@ -15,6 +15,11 @@ public class UserService {
         this.authService = authService;
     }
 
+    public void clearRequest(){
+        userStorage.clear();
+        authService.clearRequest();
+    }
+
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{
         if(userStorage.userTaken(user.username())){
             throw new AlreadyTakenException("Error: User already taken");
