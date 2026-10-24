@@ -18,4 +18,7 @@ public class AuthService {
         return authData;
     }
 
+    public AuthDataAccess getAuthStorage(){
+        return authStorage;
+    }
 }

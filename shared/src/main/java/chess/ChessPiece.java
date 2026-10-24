@@ -127,10 +127,7 @@ public class ChessPiece {
         else if(piece.getPieceType() == PieceType.KNIGHT){
             moves = new int[][]{{-2,1},{-2,-1},{-1,2},{-1,-2},{1,-2},{1,2},{2,1},{2,-1}};
         }
-        else if(piece.getPieceType() == PieceType.KING){
-            moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{0,1},{0,-1},{-1,0},{1,0}};
-        }
-        else if(piece.getPieceType() == PieceType.QUEEN){
+        else if(piece.getPieceType() == PieceType.QUEEN || piece.getPieceType() == PieceType.KING){
             moves = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{0,1},{0,-1},{-1,0},{1,0}};
         }
         else {

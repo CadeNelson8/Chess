@@ -25,12 +25,19 @@ public class UserService {
     }
 
     public AuthData loginRequest(UserData user) throws UnauthorizedException {
-        if(!userStorage.userTaken(user.username()) || !userStorage.userTaken(user.password())){
+        if(!userStorage.userTaken(user.username()) || !userStorage.passwordTaken(user.password())){
             throw new UnauthorizedException("Error: unauthorized");
         }
         UserData real_user = userStorage.getUser(user.username());
         AuthData var = authService.createAuth(real_user);
         return var;
+    }
+
+    public void logoutRequest(AuthData auth) throws UnauthorizedException{
+        if(!userStorage.userTaken(auth.username()) || !authService.getAuthStorage().authTaken(auth)){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        authService.getAuthStorage().deleteAuth(auth);
     }
 
 }

@@ -13,4 +13,11 @@ public class AuthDataAccess {
         this.map.put(authData.username(), authData);
     }
 
+    public void deleteAuth(AuthData authData){
+        this.map.remove(authData.username());
+    }
+
+    public boolean authTaken(AuthData authToken){
+        return map.containsValue(authToken);
+    }
 }

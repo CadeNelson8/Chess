@@ -24,6 +24,7 @@ public class Server {
                 javalin.delete("/db", this::clearDb);
             javalin.post("/user", this::register);
             javalin.post("/session",this::login);
+            javalin.delete("/session",this::logout);
         // Register your endpoints and exception handlers here.
 
     }
@@ -69,8 +70,22 @@ public class Server {
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
         }
-
     }
+
+    public void logout(@NotNull Context ctx){
+        var auth = new Gson().fromJson(ctx.body(), AuthData.class);
+        try {
+            userService.logoutRequest(auth);
+            ctx.status(200);
+            ctx.result();
+        }
+        catch(UnauthorizedException e){
+            ctx.status(401);
+            ctx.result("{\"message\": \"Error: unauthorized\"}");
+        }
+    }
+
+
 
 
     //
