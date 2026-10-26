@@ -1,10 +1,12 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.AlreadyTakenException;
 import dataaccess.GameDataAccess;
 import dataaccess.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
+import server.GameRequest;
 
 import java.util.Map;
 
@@ -33,17 +35,19 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         ChessGame g = new ChessGame();
-        GameData gameData = new GameData(1, "p1", "p2", gameName=gameName, g);
+        GameData gameData = new GameData( null, null, gameName, g);
         gameStorage.add(gameData);
-        return 1;
+        return gameData.getID();
     }
 
-    public void joinGameRequest(int id, String color, AuthData auth) throws UnauthorizedException{
+    public void joinGameRequest(GameRequest gameRequest, AuthData auth) throws UnauthorizedException, AlreadyTakenException {
         if(!authService.getAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
-        GameData game = GameDataAccess.enterGame(id);
-
+        GameData game = GameDataAccess.enterGame(gameRequest.gameID());
+        if(game.blackUsername()==null && game.whiteUsername() == null){
+            throw new AlreadyTakenException("Error: already taken");
+        }
     }
 
 }

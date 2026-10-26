@@ -1,14 +1,14 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.AlreadyTakenException;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.GameData;
 import org.jetbrains.annotations.NotNull;
 import model.UserData;
+import service.AuthService;
 import service.GameService;
 import service.UserService;
 
@@ -19,7 +19,13 @@ public class Server {
     private final Javalin javalin;
     private final GameService gameService;
 
-    public Server(UserService userService, GameService gameService) {
+    public Server() {
+        UserDataAccess userDA = new UserDataAccess();
+        AuthDataAccess authDA = new AuthDataAccess();
+        GameDataAccess gameDA = new GameDataAccess();
+        AuthService authService = new AuthService(authDA);
+        GameService gameService = new GameService(gameDA, authService);
+        UserService userService = new UserService(userDA, authService);
         this.userService = userService;
         this.gameService = gameService;
 
@@ -45,35 +51,36 @@ public class Server {
     }
 
     public void joinGame(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.body(), AuthData.class);
-        // need to get player color and id as well
-        String color = "";
-        int id = 1;
-        /*if (user.username()==null || user.password() == null || user.email() == null){
+        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
+        var gameRequest = new Gson().fromJson(ctx.body(), GameRequest.class);
+        if (auth.username()==null || auth.authToken() == null){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
-        }*/
+        }
         try {
-            gameService.joinGameRequest(id, color, auth);
+            gameService.joinGameRequest(gameRequest, auth);
             ctx.status(200);
-            ctx.result(new Gson().toJson(id));
+            ctx.result();
         }
         catch(UnauthorizedException e){
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
         }
+        catch(AlreadyTakenException a){
+            ctx.status(403);
+            ctx.result("{\"message\": \"Error: already taken\"}");
+        }
     }
 
     public void createGame(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.body(), AuthData.class);
-        // need to get game name as well
-        String gameName = "";
-        /*if (user.username()==null || user.password() == null || user.email() == null){
+        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
+        String gameName = new Gson().fromJson(ctx.body(), String.class);
+        if (auth.username()==null || auth.authToken() == null){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
-        }*/
+        }
         try {
             int id = gameService.createGameRequest(gameName, auth);
             ctx.status(200);
@@ -86,7 +93,7 @@ public class Server {
     }
 
     public void listGames(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.body(), AuthData.class);
+        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
         try {
             Map<String, GameData> games = gameService.listGames(auth);
             ctx.status(200);

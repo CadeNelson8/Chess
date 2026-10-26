@@ -24,7 +24,7 @@ public class GameDataAccess {
         GameData game = null;
         while (iterator.hasNext()) {
             Map.Entry<String, GameData> entry = iterator.next();
-            if (entry.getValue().gameID()==id) {
+            if (entry.getValue().getID()==id) {
                 game = entry.getValue();
             }
         }
