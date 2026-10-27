@@ -13,25 +13,28 @@ import service.AuthService;
 import service.GameService;
 import service.UserService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
     private final UserService userService;
     private final Javalin javalin;
     private final GameService gameService;
+    UserDataAccess userDA = new UserDataAccess();
+    AuthDataAccess authDA = new AuthDataAccess();
+    GameDataAccess gameDA = new GameDataAccess();
+    AuthService authService = new AuthService(authDA);
+
 
     public Server() {
-        UserDataAccess userDA = new UserDataAccess();
-        AuthDataAccess authDA = new AuthDataAccess();
-        GameDataAccess gameDA = new GameDataAccess();
-        AuthService authService = new AuthService(authDA);
         GameService gameService = new GameService(gameDA, authService);
         UserService userService = new UserService(userDA, authService);
         this.userService = userService;
         this.gameService = gameService;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-                javalin.delete("/db", this::clearDb);
+            javalin.delete("/db", this::clearDb);
             javalin.post("/user", this::register);
             javalin.post("/session",this::login);
             javalin.delete("/session",this::logout);
@@ -52,15 +55,15 @@ public class Server {
     }
 
     public void joinGame(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
-        var gameRequest = new Gson().fromJson(ctx.body(), GameRequest.class);
-        if (auth.username()==null || auth.authToken() == null){
+        String authToken = ctx.header("authorization");
+        if (!authDA.authTaken(authToken)){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
         }
+        var gameRequest = new Gson().fromJson(ctx.body(), GameRequest.class);
         try {
-            gameService.joinGameRequest(gameRequest, auth);
+            gameService.joinGameRequest(gameRequest, authToken);
             ctx.status(200);
             ctx.result();
         }
@@ -76,16 +79,18 @@ public class Server {
 
     public void createGame(@NotNull Context ctx){
         String auth = ctx.header("authorization");
-        var gameName = new Gson().fromJson(ctx.body(), GameName.class);
         if (auth == null){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
         }
+        var gameName = new Gson().fromJson(ctx.body(), GameName.class);
         try {
             int id = gameService.createGameRequest(gameName, auth);
+            Map<String, Integer> gameID = new HashMap<>();
+            gameID.put("gameID", id);
             ctx.status(200);
-            ctx.result(new Gson().toJson(id));
+            ctx.result(new Gson().toJson(gameID));
         }
         catch(UnauthorizedException e){
             ctx.status(401);
@@ -94,19 +99,23 @@ public class Server {
     }
 
     public void listGames(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
+        String auth = ctx.header("authorization");
         try {
             Map<GameName, GameData> games = gameService.listGames(auth);
+            ArrayList<GameData> list = new ArrayList<>();
+            for (Map.Entry<GameName, GameData> entry : games.entrySet()){
+                list.add(entry.getValue());
+            }
+            Map<String, ArrayList<GameData>> gameResult = new HashMap<>();
+            gameResult.put("games", list);
             ctx.status(200);
-            ctx.result(new Gson().toJson(games));
+            ctx.result(new Gson().toJson(gameResult));
         }
         catch(UnauthorizedException e){
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
         }
     }
-
-
 
     public void register(@NotNull Context ctx){
         var user = new Gson().fromJson(ctx.body(), UserData.class);

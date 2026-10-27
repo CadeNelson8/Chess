@@ -20,8 +20,8 @@ public class GameService {
         this.authService = authService;
     }
 
-    public Map<GameName, GameData> listGames(AuthData auth) throws UnauthorizedException{
-        if(authService.getAuthStorage().authTaken(auth.authToken())){
+    public Map<GameName, GameData> listGames(String auth) throws UnauthorizedException{
+        if(authService.getAuthStorage().authTaken(auth)){
             return gameStorage.getGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -41,8 +41,8 @@ public class GameService {
         return gameData.getID();
     }
 
-    public void joinGameRequest(GameRequest gameRequest, AuthData auth) throws UnauthorizedException, AlreadyTakenException {
-        if(!authService.getAuthStorage().authTaken(auth.authToken())){
+    public void joinGameRequest(GameRequest gameRequest, String auth) throws UnauthorizedException, AlreadyTakenException {
+        if(!authService.getAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
         GameData game = GameDataAccess.enterGame(gameRequest.gameID());
