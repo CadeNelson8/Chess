@@ -38,8 +38,8 @@ public class UserService {
         return var;
     }
 
-    public void logoutRequest(AuthData auth) throws UnauthorizedException{
-        if(!userStorage.userTaken(auth.username()) || !authService.getAuthStorage().authTaken(auth)){
+    public void logoutRequest(String auth) throws UnauthorizedException{
+        if(!authService.getAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
         authService.getAuthStorage().deleteAuth(auth);

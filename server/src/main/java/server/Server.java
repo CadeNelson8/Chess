@@ -6,6 +6,7 @@ import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.GameData;
+import model.GameName;
 import org.jetbrains.annotations.NotNull;
 import model.UserData;
 import service.AuthService;
@@ -74,9 +75,9 @@ public class Server {
     }
 
     public void createGame(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
-        String gameName = new Gson().fromJson(ctx.body(), String.class);
-        if (auth.username()==null || auth.authToken() == null){
+        String auth = ctx.header("authorization");
+        var gameName = new Gson().fromJson(ctx.body(), GameName.class);
+        if (auth == null){
             ctx.status(400);
             ctx.result("{\"message\": \"Error: bad request\"}");
             return;
@@ -95,7 +96,7 @@ public class Server {
     public void listGames(@NotNull Context ctx){
         var auth = new Gson().fromJson(ctx.header("authorization"), AuthData.class);
         try {
-            Map<String, GameData> games = gameService.listGames(auth);
+            Map<GameName, GameData> games = gameService.listGames(auth);
             ctx.status(200);
             ctx.result(new Gson().toJson(games));
         }
@@ -145,7 +146,12 @@ public class Server {
     }
 
     public void logout(@NotNull Context ctx){
-        var auth = new Gson().fromJson(ctx.body(), AuthData.class);
+        String auth = ctx.header("authorization");
+        if (auth == null){
+            ctx.status(400);
+            ctx.result("{\"message\": \"Error: bad request\"}");
+            return;
+        }
         try {
             userService.logoutRequest(auth);
             ctx.status(200);

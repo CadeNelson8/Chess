@@ -7,6 +7,7 @@ import dataaccess.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import server.GameRequest;
+import model.GameName;
 
 import java.util.Map;
 
@@ -19,8 +20,8 @@ public class GameService {
         this.authService = authService;
     }
 
-    public Map<String, GameData> listGames(AuthData auth) throws UnauthorizedException{
-        if(authService.getAuthStorage().authTaken(auth)){
+    public Map<GameName, GameData> listGames(AuthData auth) throws UnauthorizedException{
+        if(authService.getAuthStorage().authTaken(auth.authToken())){
             return gameStorage.getGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -30,7 +31,7 @@ public class GameService {
         gameStorage.clear();
     }
 
-    public int createGameRequest(String gameName, AuthData auth) throws UnauthorizedException{
+    public int createGameRequest(GameName gameName, String auth) throws UnauthorizedException{
         if(!authService.getAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -41,7 +42,7 @@ public class GameService {
     }
 
     public void joinGameRequest(GameRequest gameRequest, AuthData auth) throws UnauthorizedException, AlreadyTakenException {
-        if(!authService.getAuthStorage().authTaken(auth)){
+        if(!authService.getAuthStorage().authTaken(auth.authToken())){
             throw new UnauthorizedException("Error: unauthorized");
         }
         GameData game = GameDataAccess.enterGame(gameRequest.gameID());

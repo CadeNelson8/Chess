@@ -9,15 +9,15 @@ public class AuthDataAccess {
     Map<String, AuthData> map = new HashMap<>();
 
     public void addAuth(AuthData authData){
-        this.map.put(authData.username(), authData);
+        this.map.put(authData.authToken(), authData);
     }
 
-    public void deleteAuth(AuthData authData){
-        this.map.remove(authData.username());
+    public void deleteAuth(String authData){
+        this.map.remove(authData);
     }
 
-    public boolean authTaken(AuthData authToken){
-        return map.containsValue(authToken);
+    public boolean authTaken(String authToken){
+        return map.containsKey(authToken);
     }
 
     public void clear(){
