@@ -4,27 +4,27 @@ import chess.ChessGame;
 import model.GameData;
 import model.GameName;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class GameDataAccess {
-    static Map<GameName, GameData> map = new HashMap<>();
+    static Map<Integer, GameData> map = new HashMap<>();
 
-    public Map<GameName, GameData> getGames(){
-        return map;
+    public Collection<GameData> getGames(){
+        return map.values();
     }
 
     public void add(GameData game){
-        this.map.put(game.gameName(), game);
+        map.put(game.gameID(), game);
     }
 
     public static GameData enterGame(int id){
-        Iterator<Map.Entry<GameName, GameData>> iterator = map.entrySet().iterator();
-        ChessGame g = new ChessGame();
+        Iterator<Map.Entry<Integer, GameData>> iterator = map.entrySet().iterator();
         GameData game = null;
         while (iterator.hasNext()) {
-            Map.Entry<GameName, GameData> entry = iterator.next();
+            Map.Entry<Integer, GameData> entry = iterator.next();
             if (entry.getValue().getID()==id) {
                 game = entry.getValue();
             }

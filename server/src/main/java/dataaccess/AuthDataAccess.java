@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,15 @@ public class AuthDataAccess {
 
     public boolean authTaken(String authToken){
         return map.containsKey(authToken);
+    }
+
+    public String getUsername(String authToken){
+        for (Map.Entry<String, AuthData> entry : map.entrySet()){
+            if(entry.getValue().authToken().equals(authToken)){
+                return entry.getValue().username();
+            }
+        }
+        return null;
     }
 
     public void clear(){

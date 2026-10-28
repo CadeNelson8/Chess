@@ -4,12 +4,11 @@ import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
 import dataaccess.GameDataAccess;
 import dataaccess.UnauthorizedException;
-import model.AuthData;
 import model.GameData;
+import server.Color;
 import server.GameRequest;
-import model.GameName;
 
-import java.util.Map;
+import java.util.Collection;
 
 public class GameService {
     private final GameDataAccess gameStorage;
@@ -20,7 +19,7 @@ public class GameService {
         this.authService = authService;
     }
 
-    public Map<GameName, GameData> listGames(String auth) throws UnauthorizedException{
+    public Collection<GameData> listGames(String auth) throws UnauthorizedException{
         if(authService.getAuthStorage().authTaken(auth)){
             return gameStorage.getGames();
         }
@@ -31,24 +30,32 @@ public class GameService {
         gameStorage.clear();
     }
 
-    public int createGameRequest(GameName gameName, String auth) throws UnauthorizedException{
+    public int createGameRequest(String gameName, String auth) throws UnauthorizedException{
         if(!authService.getAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
         ChessGame g = new ChessGame();
-        GameData gameData = new GameData( null, null, gameName, g);
+        GameData gameData = new GameData(GameData.generateID(), null, null, gameName, g);
         gameStorage.add(gameData);
         return gameData.getID();
     }
 
     public void joinGameRequest(GameRequest gameRequest, String auth) throws UnauthorizedException, AlreadyTakenException {
-        if(!authService.getAuthStorage().authTaken(auth)){
-            throw new UnauthorizedException("Error: unauthorized");
-        }
         GameData game = GameDataAccess.enterGame(gameRequest.gameID());
-        if(game.blackUsername()==null && game.whiteUsername() == null){
+        if(game.whiteUsername()==null && gameRequest.playerColor() == Color.WHITE){
+            String username = authService.getAuthStorage().getUsername(auth);
+            GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+            gameStorage.add(new_game);
+        }
+        else if(game.blackUsername()==null && gameRequest.playerColor() == Color.BLACK){
+            String username = authService.getAuthStorage().getUsername(auth);
+            GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+            gameStorage.add(new_game);
+        }
+        else{
             throw new AlreadyTakenException("Error: already taken");
         }
+
     }
 
 }

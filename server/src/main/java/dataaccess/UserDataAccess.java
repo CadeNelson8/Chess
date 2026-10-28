@@ -19,8 +19,8 @@ public class UserDataAccess {
         return map.containsKey(username);
     }
 
-    public boolean passwordTaken(String password){
-        return map.containsValue(password);
+    public boolean passwordCorrect(String username, String password){
+        return map.get(username).password().equals(password);
     }
 
     public void clear(){

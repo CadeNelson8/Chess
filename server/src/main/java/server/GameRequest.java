@@ -1,4 +1,4 @@
 package server;
 
-public record GameRequest(String playerColor, int gameID) {
+public record GameRequest(Color playerColor, int gameID) {
 }

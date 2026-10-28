@@ -30,12 +30,12 @@ public class UserService {
     }
 
     public AuthData loginRequest(UserData user) throws UnauthorizedException {
-        if(!userStorage.userTaken(user.username()) || !userStorage.passwordTaken(user.password())){
-            throw new UnauthorizedException("Error: unauthorized");
+        if(userStorage.userTaken(user.username()) && userStorage.passwordCorrect(user.username(), user.password())){
+            UserData real_user = userStorage.getUser(user.username());
+            AuthData var = authService.createAuth(real_user);
+            return var;
         }
-        UserData real_user = userStorage.getUser(user.username());
-        AuthData var = authService.createAuth(real_user);
-        return var;
+        throw new UnauthorizedException("Error: unauthorized");
     }
 
     public void logoutRequest(String auth) throws UnauthorizedException{
