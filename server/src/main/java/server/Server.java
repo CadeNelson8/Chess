@@ -52,24 +52,6 @@ public class Server {
         ctx.status(200);
         ctx.result();
     }
-    /*
-    String auth = ctx.header("authorization");
-        try {
-            Map<GameName, GameData> games = gameService.listGames(auth);
-            ArrayList<GameData> list = new ArrayList<>();
-            for (Map.Entry<GameName, GameData> entry : games.entrySet()){
-                list.add(entry.getValue());
-            }
-            Map<String, ArrayList<GameData>> gameResult = new HashMap<>();
-            gameResult.put("games", list);
-            ctx.status(200);
-            ctx.result(new Gson().toJson(gameResult));
-        }
-        catch(UnauthorizedException e){
-            ctx.status(401);
-            ctx.result("{\"message\": \"Error: unauthorized\"}");
-        }
-     */
 
     public void joinGame(@NotNull Context ctx){
         String authToken = ctx.header("authorization");
