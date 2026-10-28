@@ -20,7 +20,7 @@ public class GameServiceTest {
     private GameService gameService;
 
     @BeforeEach
-    void setUp() throws AlreadyTakenException {
+    void setUp() {
         UserDataAccess userDA = new UserDataAccess();
         AuthDataAccess authDA = new AuthDataAccess();
         GameDataAccess gameDA = new GameDataAccess();
@@ -29,8 +29,58 @@ public class GameServiceTest {
         UserService userService = new UserService(userDA, authService);
         this.userService = userService;
         this.gameService = gameService;
+    }
 
+    @Test
+    void registerRequestSuccess() throws AlreadyTakenException {
+        UserData user = new UserData("me", "1234", "I@mail.com");
+        AuthData auth = userService.registerRequest(user);
 
+        assertEquals("me", auth.username());
+    }
+
+    @Test
+    void registerRequestFail() throws AlreadyTakenException {
+        UserData user = new UserData("me", "1234", "I@mail.com");
+        AuthData auth = userService.registerRequest(user);
+        assertThrows(AlreadyTakenException.class, () -> {userService.registerRequest(user);});
+    }
+
+    @Test
+    void clearDbPass(){
+        userService.clearRequest();
+        gameService.clearRequest();
+    }
+
+    @Test
+    void loginRequestSuccess() throws AlreadyTakenException {
+        UserData user = new UserData("me", "1234", "I@mail.com");
+        AuthData auth = userService.registerRequest(user);
+        AuthData authData = userService.loginRequest(user);
+
+        assertEquals("me", authData.username());
+    }
+
+    @Test
+    void loginRequestFail() throws UnauthorizedException, AlreadyTakenException {
+        UserData user = new UserData("me", "1234", "I@mail.com");
+        assertThrows(UnauthorizedException.class, () -> {userService.loginRequest(user);});
+    }
+
+    @Test
+    void logoutRequestSuccess() throws AlreadyTakenException {
+        UserData user = new UserData("me", "1234", "I@mail.com");
+        AuthData auth = userService.registerRequest(user);
+        AuthData authData = userService.loginRequest(user);
+        userService.logoutRequest(auth.authToken());
+
+        assertEquals(authData.username(), "me");
+    }
+
+    @Test
+    void logoutRequestFail() {
+        String auth = "nope";
+        assertThrows(UnauthorizedException.class, () -> userService.logoutRequest(auth));
     }
 
     @Test
@@ -72,10 +122,5 @@ public class GameServiceTest {
         gameService.joinGameRequest(enter, auth.authToken());
 
         assertThrows(AlreadyTakenException.class, () -> {gameService.joinGameRequest(enter, "nope");});
-    }
-
-    @Test
-    void clearDb(){
-        gameService.clearRequest();
     }
 }
