@@ -141,6 +141,8 @@ public class ChessPiece {
         }
     }
 
+
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         int [][] moves;
@@ -176,21 +178,7 @@ public class ChessPiece {
             for(int[] move : moves) {
                 if(inBounds(move, myPosition)) {
                     ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
-                    if (move[1] == 0) {
-                        if (board.getPiece(p) == null) {
-                            promotePiece(list, p, myPosition);
-                            ChessPosition d = new ChessPosition(myPosition.getRow() + move[0] + move[0], myPosition.getColumn() + move[1] + move[1]);
-                            if(doublemove && board.getPiece(d) == null){
-                                ChessMove n = new ChessMove(myPosition, d, null);
-                                list.add(n);
-                            }
-                        }
-                    } else {
-                        if (board.getPiece(p) != null && board.getPiece(p).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                            promotePiece(list, p, myPosition);
-
-                        }
-                    }
+                    PawnMove(move, p, myPosition, board, doublemove, list);
                 }
             }
         }
@@ -211,5 +199,22 @@ public class ChessPiece {
             }
         }
         return list;
+    }
+
+    public void PawnMove(int[] move, ChessPosition p, ChessPosition myPosition, ChessBoard board, boolean doublemove, Collection<ChessMove> list){
+        if (move[1] == 0) {
+            if (board.getPiece(p) == null) {
+                promotePiece(list, p, myPosition);
+                ChessPosition d = new ChessPosition(myPosition.getRow() + move[0] + move[0], myPosition.getColumn() + move[1] + move[1]);
+                if(doublemove && board.getPiece(d) == null){
+                    ChessMove n = new ChessMove(myPosition, d, null);
+                    list.add(n);
+                }
+            }
+        } else {
+            if (board.getPiece(p) != null && board.getPiece(p).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                promotePiece(list, p, myPosition);
+            }
+        }
     }
 }
