@@ -178,7 +178,7 @@ public class ChessPiece {
             for(int[] move : moves) {
                 if(inBounds(move, myPosition)) {
                     ChessPosition p = new ChessPosition(myPosition.getRow() + move[0], myPosition.getColumn() + move[1]);
-                    PawnMove(move, p, myPosition, board, doublemove, list);
+                    pawnMove(move, p, myPosition, board, doublemove, list);
                 }
             }
         }
@@ -201,7 +201,7 @@ public class ChessPiece {
         return list;
     }
 
-    public void PawnMove(int[] move, ChessPosition p, ChessPosition myPosition, ChessBoard board, boolean doublemove, Collection<ChessMove> list){
+    public void pawnMove(int[] move, ChessPosition p, ChessPosition myPosition, ChessBoard board, boolean doublemove, Collection<ChessMove> list){
         if (move[1] == 0) {
             if (board.getPiece(p) == null) {
                 promotePiece(list, p, myPosition);
