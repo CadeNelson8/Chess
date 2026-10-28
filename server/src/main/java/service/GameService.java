@@ -41,7 +41,7 @@ public class GameService {
     }
 
     public void joinGameRequest(GameRequest gameRequest, String auth) throws UnauthorizedException, AlreadyTakenException {
-        GameData game = GameDataAccess.enterGame(gameRequest.gameID());
+        GameData game = gameStorage.enterGame(gameRequest.gameID());
         if(game.whiteUsername()==null && gameRequest.playerColor() == Color.WHITE){
             String username = authService.getAuthStorage().getUsername(auth);
             GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());

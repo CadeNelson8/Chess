@@ -12,8 +12,6 @@ import model.UserData;
 import service.AuthService;
 import service.GameService;
 import service.UserService;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
