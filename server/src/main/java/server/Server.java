@@ -12,9 +12,14 @@ import model.UserData;
 import service.AuthService;
 import service.GameService;
 import service.UserService;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import static server.DatabaseManager.createDatabase;
+import java.sql.DriverManager;
 
 public class Server {
     private final UserService userService;
@@ -31,6 +36,7 @@ public class Server {
         UserService userService = new UserService(userDA, authService);
         this.userService = userService;
         this.gameService = gameService;
+        createDatabase();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
             javalin.delete("/db", this::clearDb);
@@ -45,6 +51,12 @@ public class Server {
         // Register your endpoints and exception handlers here.
 
     }
+
+    Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
+    }
+
+
 
     private void clearDb(@NotNull Context ctx){
         userService.clearRequest();
