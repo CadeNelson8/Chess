@@ -1,4 +1,4 @@
-package server;
+package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 
@@ -52,13 +52,31 @@ public class DatabaseManager {
             conn.setCatalog("user");
 
             var createGameTable = """
-            CREATE TABLE IF NOT EXISTS game (
-                id INT NOT NULL AUTO_INCREMENT,
-                whiteUsername VARCHAR(255),
-                blackUsername VARCHAR(255),
-                gameName VARCHAR(255) NOT NULL
-                game TEXT NOT NULL,
-                PRIMARY KEY (id)
+            CREATE TABLE IF NOT EXISTS user (
+                username VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL
+                PRIMARY KEY (username)
+            )""";
+
+            try (var createTableStatement = conn.prepareStatement(createGameTable)) {
+                createTableStatement.executeUpdate();
+            }
+        }
+    }
+
+    static void configureAuthDatabase() throws SQLException {
+        try (var conn = getConnection()) {
+            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS auth");
+            createDbStatement.executeUpdate();
+
+            conn.setCatalog("auth");
+
+            var createGameTable = """
+            CREATE TABLE IF NOT EXISTS auth (
+                username VARCHAR(255) NOT NULL,
+                authToken VARCHAR(255) NOT NULL,
+                PRIMARY KEY (username)
             )""";
 
             try (var createTableStatement = conn.prepareStatement(createGameTable)) {
@@ -73,7 +91,8 @@ public class DatabaseManager {
              var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
             configureGameDatabase();
-
+            configureUserDatabase();
+            configureAuthDatabase();
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }

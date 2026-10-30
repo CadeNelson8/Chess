@@ -13,13 +13,10 @@ import service.AuthService;
 import service.GameService;
 import service.UserService;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import static server.DatabaseManager.createDatabase;
-import java.sql.DriverManager;
+import static dataaccess.sql.DatabaseManager.createDatabase;
 
 public class Server {
     private final UserService userService;
@@ -51,12 +48,6 @@ public class Server {
         // Register your endpoints and exception handlers here.
 
     }
-
-    Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
-    }
-
-
 
     private void clearDb(@NotNull Context ctx){
         userService.clearRequest();
@@ -143,6 +134,10 @@ public class Server {
             ctx.status(403);
             ctx.result("{\"message\": \"Error: already taken\"}");
         }
+        catch(DataAccessException e){
+            ctx.status(500);
+            ctx.result("{\"message\": \"Error: failed to get connection\"}");
+        }
 
     }
 
@@ -162,6 +157,10 @@ public class Server {
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
         }
+        catch(DataAccessException e){
+            ctx.status(500);
+            ctx.result("{\"message\": \"Error: failed to get connection\"}");
+        }
     }
 
     public void logout(@NotNull Context ctx){
@@ -179,6 +178,10 @@ public class Server {
         catch(UnauthorizedException e){
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
+        }
+        catch(DataAccessException e){
+            ctx.status(500);
+            ctx.result("{\"message\": \"Error: failed to get connection\"}");
         }
     }
 
