@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.sql.DatabaseManager;
+import dataaccess.sql.sqlAuthDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -23,9 +25,12 @@ public class Server {
     private final Javalin javalin;
     private final GameService gameService;
     UserDataAccess userDA = new UserDataAccess();
-    AuthDataAccess authDA = new AuthDataAccess();
+    //AuthDataAccess authDA = new AuthDataAccess();
+    sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
     GameDataAccess gameDA = new GameDataAccess();
-    AuthService authService = new AuthService(authDA);
+    AuthService authService = new AuthService(sqlAuth);
+
+    DatabaseManager sqlDB = new DatabaseManager();
 
 
     public Server() {
@@ -34,6 +39,7 @@ public class Server {
         this.userService = userService;
         this.gameService = gameService;
         createDatabase();
+        DatabaseManager.createDatabase();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
             javalin.delete("/db", this::clearDb);

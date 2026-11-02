@@ -11,6 +11,7 @@ public class AuthDataAccess {
 
     public void addAuth(AuthData authData){
         this.map.put(authData.authToken(), authData);
+
     }
 
     public void deleteAuth(String authData){
