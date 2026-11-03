@@ -69,7 +69,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS auth (
                 username VARCHAR(255) NOT NULL,
                 authToken VARCHAR(255) NOT NULL,
-                PRIMARY KEY (username)
+                PRIMARY KEY (authToken)
             )""";
 
             try (var createTableStatement = conn.prepareStatement(createGameTable)) {
