@@ -65,8 +65,6 @@ public class DatabaseManager {
         try (var conn = getConnection()) {
             var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS auth");
             createDbStatement.executeUpdate();
-
-
             var createGameTable = """
             CREATE TABLE IF NOT EXISTS auth (
                 username VARCHAR(255) NOT NULL,

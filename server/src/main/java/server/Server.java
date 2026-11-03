@@ -64,7 +64,7 @@ public class Server {
 
     public void joinGame(@NotNull Context ctx){
         String authToken = ctx.header("authorization");
-        if (!authDA.authTaken(authToken)){
+        if (!sqlAuth.authTaken(authToken)){
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
             return;

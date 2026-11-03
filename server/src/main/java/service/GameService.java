@@ -20,7 +20,7 @@ public class GameService {
     }
 
     public Collection<GameData> listGames(String auth) throws UnauthorizedException{
-        if(authService.getAuthStorage().authTaken(auth)){
+        if(authService.getSQLAuthStorage().authTaken(auth)){
             return gameStorage.getGames();
         }
         throw new UnauthorizedException("Error: unauthorized");
@@ -31,7 +31,7 @@ public class GameService {
     }
 
     public int createGameRequest(String gameName, String auth) throws UnauthorizedException{
-        if(!authService.getAuthStorage().authTaken(auth)){
+        if(!authService.getSQLAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
         ChessGame g = new ChessGame();
@@ -43,12 +43,12 @@ public class GameService {
     public void joinGameRequest(GameRequest gameRequest, String auth) throws UnauthorizedException, AlreadyTakenException {
         GameData game = gameStorage.enterGame(gameRequest.gameID());
         if(game.whiteUsername()==null && gameRequest.playerColor() == Color.WHITE){
-            String username = authService.getAuthStorage().getUsername(auth);
+            String username = authService.getSQLAuthStorage().getUsername(auth);
             GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
             gameStorage.add(new_game);
         }
         else if(game.blackUsername()==null && gameRequest.playerColor() == Color.BLACK){
-            String username = authService.getAuthStorage().getUsername(auth);
+            String username = authService.getSQLAuthStorage().getUsername(auth);
             GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
             gameStorage.add(new_game);
         }

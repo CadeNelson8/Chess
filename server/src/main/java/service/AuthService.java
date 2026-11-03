@@ -29,8 +29,15 @@ public class AuthService {
     public AuthDataAccess getAuthStorage(){
         return authStorage;
     }
+    public sqlAuthDataAccess getSQLAuthStorage(){
+        return sqlAuthStorage;
+    }
 
     public void clearRequest(){
         authStorage.clear();
+    }
+
+    public void SQLclearRequest(){
+        sqlAuthStorage.clear();
     }
 }

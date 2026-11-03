@@ -1,6 +1,7 @@
 package dataaccess.sql;
 
 import dataaccess.DataAccessException;
+import dataaccess.UnauthorizedException;
 import model.AuthData;
 
 import java.sql.SQLException;
@@ -12,20 +13,20 @@ public class sqlAuthDataAccess {
             try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO auth (username, authToken) VALUES(?, ?)")) {
                 preparedStatement.setString(1, authData.username());
                 preparedStatement.setString(2, authData.authToken());
-
                 preparedStatement.executeUpdate();
-
             }
             catch(SQLException e){
                 throw new DataAccessException("failed to get connection");
             }
     }
 
-    public void deleteAuth(AuthData authData){
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("DELETE FROM auth WHERE username = ?")) {
-            preparedStatement.setString(1, authData.username());
-            preparedStatement.executeUpdate();
-
+    public void deleteAuth(String auth) throws UnauthorizedException{
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("DELETE FROM auth WHERE authToken = ?")) {
+            preparedStatement.setString(1, auth);
+            int ret = preparedStatement.executeUpdate();
+            if(ret == 0) {
+                throw new UnauthorizedException("Error: no such authToken exists");
+            }
         }
         catch(SQLException e){
             throw new DataAccessException("failed to get connection");
@@ -37,7 +38,6 @@ public class sqlAuthDataAccess {
             preparedStatement.setString(1, authT);
             try (var rs = preparedStatement.executeQuery()){
                 while(rs.next()){
-                    var username = rs.getString("username");
                     var authToken = rs.getString("authToken");
                     if (authToken.equals(authT)){
                         return true;
@@ -51,11 +51,28 @@ public class sqlAuthDataAccess {
         }
     }
 
-    /*public String getUsername(String authToken){
-
+    public String getUsername(String authToken){
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("SELECT username FROM auth WHERE authToken = ?")) {
+            preparedStatement.setString(1, authToken);
+            try (var rs = preparedStatement.executeQuery()){
+                var username = "";
+                while(rs.next()){
+                    username = rs.getString("username");
+                }
+                return username;
+            }
+        }
+        catch(SQLException e){
+            throw new DataAccessException("failed to get connection");
+        }
     }
 
-    /*public void clear(){
-
-    }*/
+    public void clear(){
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("TRUNCATE TABLE auth")) {
+            preparedStatement.execute();
+        }
+        catch(SQLException e){
+            throw new DataAccessException("failed to get connection");
+        }
+    }
 }

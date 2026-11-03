@@ -17,7 +17,7 @@ public class UserService {
 
     public void clearRequest(){
         userStorage.clear();
-        authService.clearRequest();
+        authService.SQLclearRequest();
     }
 
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{
@@ -39,10 +39,10 @@ public class UserService {
     }
 
     public void logoutRequest(String auth) throws UnauthorizedException{
-        if(!authService.getAuthStorage().authTaken(auth)){
+        if(!authService.getSQLAuthStorage().authTaken(auth)){
             throw new UnauthorizedException("Error: unauthorized");
         }
-        authService.getAuthStorage().deleteAuth(auth);
+        authService.getSQLAuthStorage().deleteAuth(auth);
     }
 
 }
