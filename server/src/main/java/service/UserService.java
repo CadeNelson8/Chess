@@ -6,6 +6,7 @@ import dataaccess.UserDataAccess;
 import dataaccess.sql.sqlUserDataAccess;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final UserDataAccess userStorage;
@@ -40,7 +41,9 @@ public class UserService {
     }
 
     public AuthData loginRequest(UserData user) throws UnauthorizedException {
-        if(sqlUserStorage.userTaken(user.username()) && sqlUserStorage.passwordCorrect(user.username(), user.password())){
+        String hash = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        boolean match = BCrypt.checkpw(user.password(), hash);
+        if(sqlUserStorage.userTaken(user.username()) && match && sqlUserStorage.passwordCorrect(user.username(), user.password())){
             UserData real_user = sqlUserStorage.getUser(user.username());
             AuthData var = authService.createAuth(real_user);
             return var;

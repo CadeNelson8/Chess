@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
@@ -10,7 +11,8 @@ public class sqlUserDataAccess {
         try (var conn = DatabaseManager.getConnection()) {
             try(var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
                 preparedStatement.setString(1, user.username());
-                preparedStatement.setString(2, user.password());
+                String hashpassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+                preparedStatement.setString(2, hashpassword);
                 preparedStatement.setString(3, user.email());
                 preparedStatement.executeUpdate();
             }

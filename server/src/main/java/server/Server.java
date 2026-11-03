@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import dataaccess.sql.DatabaseManager;
 import dataaccess.sql.sqlAuthDataAccess;
+import dataaccess.sql.sqlGameDataAccess;
 import dataaccess.sql.sqlUserDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
@@ -27,17 +28,15 @@ public class Server {
     private final GameService gameService;
     //UserDataAccess userDA = new UserDataAccess();
     //AuthDataAccess authDA = new AuthDataAccess();
+    //GameDataAccess gameDA = new GameDataAccess();
     sqlUserDataAccess sqlUserDA = new sqlUserDataAccess();
-
     sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
-    GameDataAccess gameDA = new GameDataAccess();
+    sqlGameDataAccess sqlGame = new sqlGameDataAccess();
+
     AuthService authService = new AuthService(sqlAuth);
 
-    DatabaseManager sqlDB = new DatabaseManager();
-
-
     public Server() {
-        GameService gameService = new GameService(gameDA, authService);
+        GameService gameService = new GameService(sqlGame, authService);
         UserService userService = new UserService(sqlUserDA, authService);
         this.userService = userService;
         this.gameService = gameService;
