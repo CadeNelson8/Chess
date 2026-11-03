@@ -3,35 +3,45 @@ package service;
 import dataaccess.AlreadyTakenException;
 import dataaccess.UnauthorizedException;
 import dataaccess.UserDataAccess;
+import dataaccess.sql.sqlUserDataAccess;
 import model.AuthData;
 import model.UserData;
 
 public class UserService {
     private final UserDataAccess userStorage;
     private final AuthService authService;
+    private final sqlUserDataAccess sqlUserStorage;
+
 
     public UserService(UserDataAccess userDA, AuthService authService){
         this.userStorage = userDA;
         this.authService = authService;
+        this.sqlUserStorage = null;
+    }
+
+    public UserService(sqlUserDataAccess sqlUserDA, AuthService authService){
+        this.userStorage = null;
+        this.authService = authService;
+        this.sqlUserStorage = sqlUserDA;
     }
 
     public void clearRequest(){
-        userStorage.clear();
+        sqlUserStorage.clear();
         authService.SQLclearRequest();
     }
 
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{
-        if(userStorage.userTaken(user.username())){
+        if(sqlUserStorage.userTaken(user.username())){
             throw new AlreadyTakenException("Error: User already taken");
         }
-        userStorage.addUser(user);
+        sqlUserStorage.addUser(user);
         AuthData var = authService.createAuth(user);
         return var;
     }
 
     public AuthData loginRequest(UserData user) throws UnauthorizedException {
-        if(userStorage.userTaken(user.username()) && userStorage.passwordCorrect(user.username(), user.password())){
-            UserData real_user = userStorage.getUser(user.username());
+        if(sqlUserStorage.userTaken(user.username()) && sqlUserStorage.passwordCorrect(user.username(), user.password())){
+            UserData real_user = sqlUserStorage.getUser(user.username());
             AuthData var = authService.createAuth(real_user);
             return var;
         }
