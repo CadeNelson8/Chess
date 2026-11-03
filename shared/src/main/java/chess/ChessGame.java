@@ -258,7 +258,7 @@ public class ChessGame {
 
     @Override
     public String toString() {
-        return "ChessGame{" +
+        return "ChessGame{" + board +
                 "teamTurn=" + teamTurn +
                 '}';
     }

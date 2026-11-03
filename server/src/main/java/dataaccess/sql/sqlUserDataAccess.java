@@ -71,7 +71,8 @@ public class sqlUserDataAccess {
                     while (rs.next()) {
                         var usern = rs.getString("username");
                         var passwordn = rs.getString("password");
-                        if (usern.equals(username) && (passwordn.equals(password))) {
+                        boolean match = BCrypt.checkpw(password, passwordn);
+                        if (match && usern.equals(username)) {
                             return true;
                         }
                     }

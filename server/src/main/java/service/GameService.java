@@ -54,12 +54,12 @@ public class GameService {
         if(game.whiteUsername()==null && gameRequest.playerColor() == Color.WHITE){
             String username = authService.getSQLAuthStorage().getUsername(auth);
             GameData new_game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-            sqlGameStorage.add(new_game);
+            sqlGameStorage.update(new_game);
         }
         else if(game.blackUsername()==null && gameRequest.playerColor() == Color.BLACK){
             String username = authService.getSQLAuthStorage().getUsername(auth);
             GameData new_game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-            sqlGameStorage.add(new_game);
+            sqlGameStorage.update(new_game);
         }
         else{
             throw new AlreadyTakenException("Error: already taken");
