@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
+import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import dataaccess.UnauthorizedException;
 import dataaccess.sql.sqlGameDataAccess;
@@ -28,11 +29,17 @@ public class GameService {
         this.sqlGameStorage = sqlGameDA;
     }
 
-    public Collection<GameData> listGames(String auth) throws UnauthorizedException{
-        if(authService.getSQLAuthStorage().authTaken(auth)){
-            return sqlGameStorage.getGames();
+    public Collection<GameData> listGames(String auth) throws UnauthorizedException, DataAccessException {
+        try {
+            if (authService.getSQLAuthStorage().authTaken(auth)) {
+                return sqlGameStorage.getGames();
+            }
+        }
+        catch(DataAccessException e){
+            throw new DataAccessException("Error: data access");
         }
         throw new UnauthorizedException("Error: unauthorized");
+
     }
 
     public void clearRequest(){

@@ -44,6 +44,7 @@ public class Server {
         DatabaseManager.createDatabase();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+            javalin.exception(Exception.class, this::exceptionHandler);
             javalin.delete("/db", this::clearDb);
             javalin.post("/user", this::register);
             javalin.post("/session",this::login);
@@ -55,6 +56,13 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
 
+    }
+
+    private void exceptionHandler(Exception e, Context ctx){
+        var body = new Gson().toJson(Map.of("message", String.format("Error: %s",
+                e.getMessage()), "success", false));
+        ctx.status(500);
+        ctx.json(body);
     }
 
     private void clearDb(@NotNull Context ctx){
@@ -124,6 +132,10 @@ public class Server {
             ctx.status(401);
             ctx.result("{\"message\": \"Error: unauthorized\"}");
         }
+        catch(DataAccessException e){
+            ctx.status(500);
+            ctx.result("{\"message\": \"Error: cannot access SQL table\"}");
+        }
     }
 
     public void register(@NotNull Context ctx){
@@ -138,9 +150,9 @@ public class Server {
             ctx.status(200);
             ctx.result(new Gson().toJson(authData));
         }
-            catch(AlreadyTakenException e){
-            ctx.status(403);
-            ctx.result("{\"message\": \"Error: already taken\"}");
+        catch(AlreadyTakenException e){
+        ctx.status(403);
+        ctx.result("{\"message\": \"Error: already taken\"}");
         }
         catch(DataAccessException e){
             ctx.status(500);

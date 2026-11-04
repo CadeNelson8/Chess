@@ -37,7 +37,7 @@ public class sqlAuthDataAccess {
         }
     }
 
-    public boolean authTaken(String authT){
+    public boolean authTaken(String authT) {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM auth WHERE authToken = ?")) {
                 preparedStatement.setString(1, authT);
