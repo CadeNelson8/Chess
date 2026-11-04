@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLTests {
     private UserService userService;
-    private Javalin javalin;
+
     private GameService gameService;
     SqlUserDataAccess sqlUserDA = new SqlUserDataAccess();
     SqlAuthDataAccess sqlAuth = new SqlAuthDataAccess();
@@ -33,18 +33,14 @@ public class SQLTests {
     @BeforeEach
     void setUp() {
         GameService gameService = new GameService(sqlGame, authService);
+        this.gameService = gameService;
+        DatabaseManager.createDatabase();
         UserService userService = new UserService(sqlUserDA, authService);
         this.userService = userService;
-        this.gameService = gameService;
-        createDatabase();
-        DatabaseManager.createDatabase();
-        UserDataAccess userDA = new UserDataAccess();
-        AuthDataAccess authDA = new AuthDataAccess();
-        GameDataAccess gameDA = new GameDataAccess();
-        AuthService authService = new AuthService(authDA);
+
     }
     @AfterEach
-    void cleanup(){
+    void clean(){
         gameService.clearRequest();
         userService.clearRequest();
     }

@@ -53,7 +53,7 @@ public class SqlGameDataAccess {
 
     public void add(GameData game){
         try (var conn = DatabaseManager.getConnection()) {
-            try(var preparedStatement = conn.prepareStatement("INSERT INTO game (id, whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?, ?)")) {
+            try(var preparedStatement = conn.prepareStatement("INSERT INTO game (id,whiteUsername,blackUsername,gameName,game) VALUES(?,?,?,?,?)")) {
                 preparedStatement.setInt(1, game.gameID());
                 preparedStatement.setString(2, game.whiteUsername());
                 preparedStatement.setString(3, game.blackUsername());
