@@ -5,7 +5,6 @@ import dataaccess.UnauthorizedException;
 import model.AuthData;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class sqlAuthDataAccess {
 

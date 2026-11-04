@@ -18,7 +18,7 @@ public class sqlUserDataAccess {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("failed to get connection");
+            throw new DataAccessException(e+"failed to get connection");
         }
     }
 
