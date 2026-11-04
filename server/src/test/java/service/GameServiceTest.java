@@ -1,35 +1,54 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.sql.DatabaseManager;
+import dataaccess.sql.sqlAuthDataAccess;
+import dataaccess.sql.sqlGameDataAccess;
+import dataaccess.sql.sqlUserDataAccess;
+import io.javalin.Javalin;
 import model.AuthData;
 import model.GameName;
 import model.UserData;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Color;
 import server.GameRequest;
 
+import static dataaccess.sql.DatabaseManager.createDatabase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameServiceTest {
-    private UserDataAccess userStorage;
     private UserService userService;
-    private AuthService authService;
-    private AuthDataAccess authDA;
+    private Javalin javalin;
     private GameService gameService;
+    sqlUserDataAccess sqlUserDA = new sqlUserDataAccess();
+    sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
+    sqlGameDataAccess sqlGame = new sqlGameDataAccess();
+    AuthService authService = new AuthService(sqlAuth);
 
     @BeforeEach
     void setUp() {
+        GameService gameService = new GameService(sqlGame, authService);
+        UserService userService = new UserService(sqlUserDA, authService);
+        this.userService = userService;
+        this.gameService = gameService;
+        createDatabase();
+        DatabaseManager.createDatabase();
         UserDataAccess userDA = new UserDataAccess();
         AuthDataAccess authDA = new AuthDataAccess();
         GameDataAccess gameDA = new GameDataAccess();
         AuthService authService = new AuthService(authDA);
-        GameService gameService = new GameService(gameDA, authService);
-        UserService userService = new UserService(userDA, authService);
-        this.userService = userService;
-        this.gameService = gameService;
     }
+
+    @AfterEach
+    void cleanup(){
+        gameService.clearRequest();
+        userService.clearRequest();
+    }
+
 
     @Test
     void registerRequestSuccess() throws AlreadyTakenException {
