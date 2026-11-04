@@ -2,14 +2,13 @@ package service;
 
 import dataaccess.*;
 import dataaccess.sql.DatabaseManager;
-import dataaccess.sql.sqlAuthDataAccess;
-import dataaccess.sql.sqlGameDataAccess;
-import dataaccess.sql.sqlUserDataAccess;
+import dataaccess.sql.SqlAuthDataAccess;
+import dataaccess.sql.SqlGameDataAccess;
+import dataaccess.sql.SqlUserDataAccess;
 import io.javalin.Javalin;
 import model.AuthData;
 import model.GameName;
 import model.UserData;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +23,9 @@ public class GameServiceTest {
     private UserService userService;
     private Javalin javalin;
     private GameService gameService;
-    sqlUserDataAccess sqlUserDA = new sqlUserDataAccess();
-    sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
-    sqlGameDataAccess sqlGame = new sqlGameDataAccess();
+    SqlUserDataAccess sqlUserDA = new SqlUserDataAccess();
+    SqlAuthDataAccess sqlAuth = new SqlAuthDataAccess();
+    SqlGameDataAccess sqlGame = new SqlGameDataAccess();
     AuthService authService = new AuthService(sqlAuth);
 
     @BeforeEach

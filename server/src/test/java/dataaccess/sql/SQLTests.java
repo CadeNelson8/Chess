@@ -1,6 +1,5 @@
 package dataaccess.sql;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
@@ -9,18 +8,14 @@ import dataaccess.UserDataAccess;
 import io.javalin.Javalin;
 import model.AuthData;
 import model.GameData;
-import model.GameName;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.GameService;
 import service.UserService;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 import static dataaccess.sql.DatabaseManager.createDatabase;
@@ -30,9 +25,9 @@ public class SQLTests {
     private UserService userService;
     private Javalin javalin;
     private GameService gameService;
-    sqlUserDataAccess sqlUserDA = new sqlUserDataAccess();
-    sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
-    sqlGameDataAccess sqlGame = new sqlGameDataAccess();
+    SqlUserDataAccess sqlUserDA = new SqlUserDataAccess();
+    SqlAuthDataAccess sqlAuth = new SqlAuthDataAccess();
+    SqlGameDataAccess sqlGame = new SqlGameDataAccess();
     AuthService authService = new AuthService(sqlAuth);
 
     @BeforeEach

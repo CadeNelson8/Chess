@@ -1,20 +1,20 @@
 package service;
 
 import dataaccess.AuthDataAccess;
-import dataaccess.sql.sqlAuthDataAccess;
+import dataaccess.sql.SqlAuthDataAccess;
 import model.AuthData;
 import model.UserData;
 
 public class AuthService {
 
     private final AuthDataAccess authStorage;
-    private final sqlAuthDataAccess sqlAuthStorage;
+    private final SqlAuthDataAccess sqlAuthStorage;
 
     public AuthService(AuthDataAccess authDA){
         this.authStorage = authDA;
         this.sqlAuthStorage = null;
     }
-    public AuthService(sqlAuthDataAccess sqlAuthStorage){
+    public AuthService(SqlAuthDataAccess sqlAuthStorage){
         this.sqlAuthStorage = sqlAuthStorage;
         this.authStorage = null;
     }
@@ -29,7 +29,7 @@ public class AuthService {
     public AuthDataAccess getAuthStorage(){
         return authStorage;
     }
-    public sqlAuthDataAccess getSQLAuthStorage(){
+    public SqlAuthDataAccess getSQLAuthStorage(){
         return sqlAuthStorage;
     }
 
@@ -37,7 +37,7 @@ public class AuthService {
         authStorage.clear();
     }
 
-    public void SQLclearRequest(){
+    public void sqlClearRequest(){
         sqlAuthStorage.clear();
     }
 }

@@ -6,7 +6,7 @@ import model.AuthData;
 
 import java.sql.SQLException;
 
-public class sqlAuthDataAccess {
+public class SqlAuthDataAccess {
 
     public void addAuth(AuthData authData)throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
@@ -43,9 +43,7 @@ public class sqlAuthDataAccess {
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
                         var authToken = rs.getString("authToken");
-                        if (authToken.equals(authT)) {
-                            return true;
-                        }
+                        return authToken.equals(authT);
                     }
                     return false;
                 }

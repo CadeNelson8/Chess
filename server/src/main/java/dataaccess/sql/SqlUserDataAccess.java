@@ -6,7 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
-public class sqlUserDataAccess {
+public class SqlUserDataAccess {
     public void addUser(UserData user){
         try (var conn = DatabaseManager.getConnection()) {
             try(var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
@@ -50,9 +50,7 @@ public class sqlUserDataAccess {
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
                         var usern = rs.getString("username");
-                        if (usern.equals(username)) {
-                            return true;
-                        }
+                        return usern.equals(username);
                     }
                     return false;
                 }
@@ -72,9 +70,7 @@ public class sqlUserDataAccess {
                         var usern = rs.getString("username");
                         var passwordn = rs.getString("password");
                         boolean match = BCrypt.checkpw(password, passwordn);
-                        if (match && usern.equals(username)) {
-                            return true;
-                        }
+                        return match && usern.equals(username);
                     }
                     return false;
                 }

@@ -3,9 +3,9 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import dataaccess.sql.DatabaseManager;
-import dataaccess.sql.sqlAuthDataAccess;
-import dataaccess.sql.sqlGameDataAccess;
-import dataaccess.sql.sqlUserDataAccess;
+import dataaccess.sql.SqlAuthDataAccess;
+import dataaccess.sql.SqlGameDataAccess;
+import dataaccess.sql.SqlUserDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -26,12 +26,9 @@ public class Server {
     private final UserService userService;
     private final Javalin javalin;
     private final GameService gameService;
-    //UserDataAccess userDA = new UserDataAccess();
-    //AuthDataAccess authDA = new AuthDataAccess();
-    //GameDataAccess gameDA = new GameDataAccess();
-    sqlUserDataAccess sqlUserDA = new sqlUserDataAccess();
-    sqlAuthDataAccess sqlAuth = new sqlAuthDataAccess();
-    sqlGameDataAccess sqlGame = new sqlGameDataAccess();
+    SqlUserDataAccess sqlUserDA = new SqlUserDataAccess();
+    SqlAuthDataAccess sqlAuth = new SqlAuthDataAccess();
+    SqlGameDataAccess sqlGame = new SqlGameDataAccess();
 
     AuthService authService = new AuthService(sqlAuth);
 

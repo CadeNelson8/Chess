@@ -3,15 +3,14 @@ package service;
 import dataaccess.AlreadyTakenException;
 import dataaccess.UnauthorizedException;
 import dataaccess.UserDataAccess;
-import dataaccess.sql.sqlUserDataAccess;
+import dataaccess.sql.SqlUserDataAccess;
 import model.AuthData;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final UserDataAccess userStorage;
     private final AuthService authService;
-    private final sqlUserDataAccess sqlUserStorage;
+    private final SqlUserDataAccess sqlUserStorage;
 
 
     public UserService(UserDataAccess userDA, AuthService authService){
@@ -20,7 +19,7 @@ public class UserService {
         this.sqlUserStorage = null;
     }
 
-    public UserService(sqlUserDataAccess sqlUserDA, AuthService authService){
+    public UserService(SqlUserDataAccess sqlUserDA, AuthService authService){
         this.userStorage = null;
         this.authService = authService;
         this.sqlUserStorage = sqlUserDA;
@@ -28,7 +27,7 @@ public class UserService {
 
     public void clearRequest(){
         sqlUserStorage.clear();
-        authService.SQLclearRequest();
+        authService.sqlClearRequest();
     }
 
     public AuthData registerRequest(UserData user) throws AlreadyTakenException{

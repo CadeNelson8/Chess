@@ -5,7 +5,7 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import dataaccess.UnauthorizedException;
-import dataaccess.sql.sqlGameDataAccess;
+import dataaccess.sql.SqlGameDataAccess;
 import model.GameData;
 import server.Color;
 import server.GameRequest;
@@ -15,7 +15,7 @@ import java.util.Collection;
 public class GameService {
     private final GameDataAccess gameStorage;
     private final AuthService authService;
-    private final sqlGameDataAccess sqlGameStorage;
+    private final SqlGameDataAccess sqlGameStorage;
 
     public GameService(GameDataAccess gameDA, AuthService authService){
         this.gameStorage = gameDA;
@@ -23,7 +23,7 @@ public class GameService {
         this.sqlGameStorage = null;
     }
 
-    public GameService(sqlGameDataAccess sqlGameDA, AuthService authService){
+    public GameService(SqlGameDataAccess sqlGameDA, AuthService authService){
         this.gameStorage = null;
         this.authService = authService;
         this.sqlGameStorage = sqlGameDA;

@@ -4,14 +4,12 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import model.GameData;
-import model.GameName;
-import model.UserData;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class sqlGameDataAccess {
+public class SqlGameDataAccess {
     public Collection<GameData> getGames(){
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT * FROM game")) {
@@ -38,7 +36,7 @@ public class sqlGameDataAccess {
 
     public void update(GameData game){
         try (var conn = DatabaseManager.getConnection()) {
-            try(var preparedStatement = conn.prepareStatement("UPDATE game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE id = ?")) {
+            try(var preparedStatement = conn.prepareStatement("UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE id=?")) {
                 preparedStatement.setInt(5, game.gameID());
                 preparedStatement.setString(1, game.whiteUsername());
                 preparedStatement.setString(2, game.blackUsername());
