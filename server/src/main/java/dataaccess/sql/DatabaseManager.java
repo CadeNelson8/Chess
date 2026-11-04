@@ -23,8 +23,6 @@ public class DatabaseManager {
      */
      static void configureGameDatabase() throws SQLException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS game");
-            createDbStatement.executeUpdate();
 
             var createGameTable = """
             CREATE TABLE IF NOT EXISTS game (
@@ -44,8 +42,6 @@ public class DatabaseManager {
 
     static void configureUserDatabase() throws SQLException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS user");
-            createDbStatement.executeUpdate();
 
             var createGameTable = """
             CREATE TABLE IF NOT EXISTS user (
@@ -63,8 +59,6 @@ public class DatabaseManager {
 
     static void configureAuthDatabase() throws SQLException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS auth");
-            createDbStatement.executeUpdate();
             var createGameTable = """
             CREATE TABLE IF NOT EXISTS auth (
                 username VARCHAR(255) NOT NULL,
