@@ -5,6 +5,9 @@ import chess.*;
 import java.util.Scanner;
 
 public class ClientMain {
+
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         boolean logged_in = false;

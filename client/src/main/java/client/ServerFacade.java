@@ -13,7 +13,7 @@ public class ServerFacade {
         this.URL = URL;
     }
 
-    public void buildRequest(Object data){
+    public void registerRequest(UserData data){
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(URL))
                 ;
