@@ -1,9 +1,6 @@
 package client;
 
 import chess.*;
-import model.UserData;
-
-import java.util.Scanner;
 
 public class ClientMain {
 

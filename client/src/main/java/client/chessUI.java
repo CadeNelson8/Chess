@@ -13,6 +13,58 @@ public class chessUI {
 
     }
 
+    public void logged_outProtocol(String[] inputs){
+        if (inputs[0].equalsIgnoreCase("help")){
+            System.out.println("Commands: ");
+            System.out.println("create NAME - to start a new game");
+            System.out.println("list - see all games");
+            System.out.println("join ID WHITE/BLACK - join a game");
+            System.out.println("logout - leave a game");
+            System.out.println("quit - leave the chess server");
+            System.out.println("help - display commands");
+            System.out.println();
+        }
+        else if (inputs[0].equalsIgnoreCase("create")){
+            if (inputs.length >= 2){
+                var request = facade.registerRequest(inputs);
+                System.out.print(request);
+            }
+            else{
+                System.out.print("Expected: USERNAME PASSWORD EMAIL");
+            }
+        }
+        else if (inputs[0].equalsIgnoreCase("list")){
+            if (inputs.length >= 1){
+                var request = facade.registerRequest(inputs);
+                System.out.print(request);
+            }
+            else{
+                System.out.print("Expected: list");
+            }
+        }
+        else if (inputs[0].equalsIgnoreCase("join")){
+            if (inputs.length >= 3){
+                var request = facade.registerRequest(inputs);
+                System.out.print(request);
+            }
+            else{
+                System.out.print("Expected: ID WHITE/BLACK");
+            }
+        }
+        else if (inputs[0].equalsIgnoreCase("logout")){
+            if (inputs.length >= 1){
+                var request = facade.registerRequest(inputs);
+                System.out.print(request);
+            }
+            else{
+                System.out.print("Expected: ID WHITE/BLACK");
+            }
+        }
+        else{
+            System.out.println("Please enter a valid input");
+        }
+    }
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         boolean logged_in = false;
@@ -24,62 +76,16 @@ public class chessUI {
             else{
                 System.out.printf("%n[LOGGED_OUT] >>> ");
             }
+
             if (!scanner.hasNextLine()) break;
+
             String line = scanner.nextLine();
             var data = line.split(" ");
+            if (data[0].equalsIgnoreCase("quit")){
+                break;
+            }
             if(logged_in) {
-                if (data[0].equalsIgnoreCase("quit")){
-                    break;
-                }
-                if (line.equalsIgnoreCase("help")){
-                    System.out.println("Commands: ");
-                    System.out.println("create NAME - to start a new game");
-                    System.out.println("list - see all games");
-                    System.out.println("join ID WHITE/BLACK - join a game");
-                    System.out.println("logout - leave a game");
-                    System.out.println("quit - leave the chess server");
-                    System.out.println("help - display commands");
-                    System.out.println();
-                }
-                else if (data[0].equalsIgnoreCase("create")){
-                    if (data.length >= 2){
-                        var request = facade.registerRequest(data);
-                        System.out.print(request);
-                    }
-                    else{
-                        System.out.print("Expected: USERNAME PASSWORD EMAIL");
-                    }
-                }
-                else if (data[0].equalsIgnoreCase("list")){
-                    if (data.length >= 1){
-                        var request = facade.registerRequest(data);
-                        System.out.print(request);
-                    }
-                    else{
-                        System.out.print("Expected: list");
-                    }
-                }
-                else if (data[0].equalsIgnoreCase("join")){
-                    if (data.length >= 3){
-                        var request = facade.registerRequest(data);
-                        System.out.print(request);
-                    }
-                    else{
-                        System.out.print("Expected: ID WHITE/BLACK");
-                    }
-                }
-                else if (data[0].equalsIgnoreCase("logout")){
-                    if (data.length >= 1){
-                        var request = facade.registerRequest(data);
-                        System.out.print(request);
-                    }
-                    else{
-                        System.out.print("Expected: ID WHITE/BLACK");
-                    }
-                }
-                else{
-                    System.out.println("Please enter a valid input");
-                }
+                logged_outProtocol(data);
             }
             else{
                 if (data[0].equalsIgnoreCase("help")){
@@ -89,9 +95,6 @@ public class chessUI {
                     System.out.println("quit - to stop playing");
                     System.out.println("help - display commands");
                     System.out.println();
-                }
-                if (data[0].equalsIgnoreCase("quit")){
-                    break;
                 }
                 else if (data[0].equalsIgnoreCase("register")){
                     if (data.length >= 4){
