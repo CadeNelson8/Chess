@@ -10,7 +10,6 @@ public class chessUI {
 
     public chessUI(String URL){
         facade = new ServerFacade(URL);
-
     }
 
     public void logged_outProtocol(String[] inputs){
@@ -98,7 +97,7 @@ public class chessUI {
                 }
                 else if (data[0].equalsIgnoreCase("register")){
                     if (data.length >= 4){
-                        var request = facade.registerRequest(data);
+                        String request = facade.registerRequest(data);
                         System.out.print(request);
                     }
                     else{
