@@ -33,10 +33,9 @@ public class ServerFacade {
         try {
             result =  client.send(built_request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
-            System.out.println("could not process your request");
-            return "registration failed";
+            throw new ResponseException (ex.getMessage());
         }
-        var status = result.statusCode();
+        int status = result.statusCode();
         if (!isSuccessful(status)) {
             var body = result.body();
             if (body != null) {
@@ -45,7 +44,6 @@ public class ServerFacade {
             throw new ResponseException("other failure: " + status);
         }
         authData = new Gson().fromJson(result.body(), AuthData.class);
-
         return "Registration successful. Welcome to chess, " + authData.username() + "!";
     }
 

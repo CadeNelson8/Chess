@@ -97,8 +97,13 @@ public class chessUI {
                 }
                 else if (data[0].equalsIgnoreCase("register")){
                     if (data.length >= 4){
-                        String request = facade.registerRequest(data);
-                        System.out.print(request);
+                        try {
+                            String request = facade.registerRequest(data);
+                            System.out.print(request);
+                        }
+                        catch (ResponseException e){
+                            System.out.println(e.message);
+                        }
                     }
                     else{
                         System.out.print("Expected: USERNAME PASSWORD EMAIL");
