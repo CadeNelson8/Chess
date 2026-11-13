@@ -22,11 +22,10 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    String registerRequest(String[] data) throws ResponseException{
-        UserData user = new UserData(data[1], data[2], data[3]);
+    public void executeRequest(Object user, String method, String path) throws ResponseException{
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(URL + "/user"))
-                .method("post", makeRequestBody(user));
+                .uri(URI.create(URL + path))
+                .method(method, makeRequestBody(user));
         request.setHeader("Content-Type", "application/json");
         HttpRequest built_request = request.build();
         HttpResponse<String> result = null;
@@ -44,19 +43,7 @@ public class ServerFacade {
             throw new ResponseException("other failure: " + status);
         }
         authData = new Gson().fromJson(result.body(), AuthData.class);
-        return "Registration successful. Welcome to chess, " + authData.username() + "!";
     }
-
-    /*HttpRequest loginRequest(String[] data){
-
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(URL + "/user"))
-                .method("register", makeRequestBody(user));
-        if (user != null) {
-            request.setHeader("Content-Type", "application/json");
-        }
-        return request.build();
-    }*/
 
     private HttpRequest.BodyPublisher makeRequestBody(Object request) {
         if (request != null) {

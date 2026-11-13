@@ -1,5 +1,6 @@
 package client;
 
+import model.AuthData;
 import model.UserData;
 
 import java.util.Scanner;
@@ -12,7 +13,7 @@ public class chessUI {
         facade = new ServerFacade(URL);
     }
 
-    public void logged_outProtocol(String[] inputs){
+    public void logged_inProtocol(String[] inputs){
         if (inputs[0].equalsIgnoreCase("help")){
             System.out.println("Commands: ");
             System.out.println("create NAME - to start a new game");
@@ -25,46 +26,34 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("create")){
             if (inputs.length >= 2){
-                var request = facade.registerRequest(inputs);
-                System.out.print(request);
+                //facade.executeRequest(inputs);
             }
             else{
                 System.out.print("Expected: USERNAME PASSWORD EMAIL");
             }
         }
         else if (inputs[0].equalsIgnoreCase("list")){
-            if (inputs.length >= 1){
-                var request = facade.registerRequest(inputs);
-                System.out.print(request);
-            }
-            else{
-                System.out.print("Expected: list");
-            }
+            //facade.executeRequest(inputs);
         }
         else if (inputs[0].equalsIgnoreCase("join")){
             if (inputs.length >= 3){
-                var request = facade.registerRequest(inputs);
-                System.out.print(request);
+                //facade.executeRequest(inputs);
             }
             else{
                 System.out.print("Expected: ID WHITE/BLACK");
             }
         }
         else if (inputs[0].equalsIgnoreCase("logout")){
-            if (inputs.length >= 1){
-                var request = facade.registerRequest(inputs);
-                System.out.print(request);
-            }
-            else{
-                System.out.print("Expected: ID WHITE/BLACK");
-            }
+            AuthData user = new AuthData(inputs[1], null);
+            facade.executeRequest(user, "delete", "/session");
+            System.out.print("Logout successful");
         }
         else{
             System.out.println("Please enter a valid input");
         }
     }
 
-    public void run() {
+    public void run() throws ResponseException{
         Scanner scanner = new Scanner(System.in);
         boolean logged_in = false;
         System.out.print("Welcome to 240 Chess. Type Help to get started");
@@ -75,16 +64,14 @@ public class chessUI {
             else{
                 System.out.printf("%n[LOGGED_OUT] >>> ");
             }
-
             if (!scanner.hasNextLine()) break;
-
             String line = scanner.nextLine();
             var data = line.split(" ");
             if (data[0].equalsIgnoreCase("quit")){
                 break;
             }
             if(logged_in) {
-                logged_outProtocol(data);
+                logged_inProtocol(data);
             }
             else{
                 if (data[0].equalsIgnoreCase("help")){
@@ -98,32 +85,39 @@ public class chessUI {
                 else if (data[0].equalsIgnoreCase("register")){
                     if (data.length >= 4){
                         try {
-                            String request = facade.registerRequest(data);
-                            System.out.print(request);
+                            UserData user = new UserData(data[1], data[2], data[3]);
+                            facade.executeRequest(user, "post", "/user");
+                            System.out.print("Welcome to chess, "+user.username()+"!");
                         }
                         catch (ResponseException e){
-                            System.out.println(e.message);
+                            System.out.println(e.getMessage());
                         }
                     }
                     else{
                         System.out.print("Expected: USERNAME PASSWORD EMAIL");
                     }
                 }
-                /*else if (data[0].equalsIgnoreCase("login")){
+                else if (data[0].equalsIgnoreCase("login")){
                     if (data.length >= 3){
-                        //UserData user = server.getUser(data[1]);
-                        var request = facade.loginRequest(data);
-                        System.out.print(request);
-                        logged_in = true;
+                        try {
+                            UserData user = new UserData(data[1], data[2], null);
+                            facade.executeRequest(user, "post", "/session");
+                            System.out.print("Enjoy your game, "+user.username()+"!");
+                            logged_in = true;
+                        }
+                        catch (ResponseException e){
+                            System.out.println(e.getMessage());
+                        }
                     }
                     else{
                         System.out.print("Expected: USERNAME PASSWORD");
                     }
-                }*/
+                }
                 else{
                     System.out.println("Please enter a valid input");
                 }
             }
         }
     }
+
 }
