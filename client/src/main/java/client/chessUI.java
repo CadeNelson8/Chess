@@ -4,7 +4,9 @@ import model.AuthData;
 import model.GameData;
 import model.ListGameResult;
 import model.UserData;
+import server.GameRequest;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class chessUI {
@@ -16,23 +18,29 @@ public class chessUI {
         facade = new ServerFacade(URL);
     }
 
-
+    public void printGameList(ListGameResult entry){
+        for(GameData game : entry.games()){
+            System.out.println("Name: "+game.gameName()
+                    +" White username: "+game.whiteUsername()
+                    +" Black username: "+game.blackUsername());
+        }
+    }
 
     public void logged_inProtocol(String[] inputs){
-        if (inputs[0].equalsIgnoreCase("help")){
-            System.out.println("Commands: ");
-            System.out.println("create NAME - to start a new game");
-            System.out.println("list - see all games");
-            System.out.println("join ID WHITE/BLACK - join a game");
-            System.out.println("logout - leave a game");
-            System.out.println("quit - leave the chess server");
-            System.out.println("help - display commands");
-            System.out.println();
+        if (inputs[0].equalsIgnoreCase("help") && inputs.length == 1){
+            System.out.println("Commands: \n"
+                    +"create NAME - to start a new game\n"
+                    +"list - see all games\n"
+                    +"join ID WHITE/BLACK - join a game\n"
+                    +"observe ID - observe a game\n"
+                    +"logout - leave a game\n"
+                    +"quit - leave the chess server\n"
+                    +"help - display commands");
         }
         else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
             try {
                 GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                facade.executeRequest(user, "post", "/game");
+                facade.executeRequestCreate(user, "post", "/game");
                 System.out.println(user.gameName()+" created");
             }
             catch (ResponseException e){
@@ -42,12 +50,22 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
             try {
                 ListGameResult games = facade.executeRequestList(null, "get", "/game");
-                System.out.println(games.games());
+                printGameList(games);
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
             }
         }
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
+            try {
+                GameRequest request = new GameRequest();
+                facade.executeRequestJoin(inputs[2], Integer.parseInt(inputs[1]), "put", "/game");
+                System.out.println(user.gameName()+" created");
+            }
+            catch (ResponseException e){
+                System.out.println(e.getMessage());
+            }
+        }
+        else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 3){
             //facade.executeRequest(inputs);
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
@@ -72,13 +90,12 @@ public class chessUI {
     }
 
     public void logged_outProtocol(String[] inputs){
-        if (inputs[0].equalsIgnoreCase("help")){
-            System.out.println("Commands: ");
-            System.out.println("register USERNAME PASSWORD EMAIL - to create an account");
-            System.out.println("login USERNAME PASSWORD - to play a game");
-            System.out.println("quit - to stop playing");
-            System.out.println("help - display commands");
-            System.out.println();
+        if (inputs[0].equalsIgnoreCase("help") && inputs.length == 1){
+            System.out.println("Commands: \n"
+                    +"register USERNAME PASSWORD EMAIL - to create an account\n"
+                    +"login USERNAME PASSWORD - to play a game\n"
+                    +"quit - to stop playing\n"
+                    +"help - display commands");
         }
         else if (inputs[0].equalsIgnoreCase("register") && inputs.length == 4){
             try {
@@ -120,16 +137,14 @@ public class chessUI {
             if (!scanner.hasNextLine()) break;
             String line = scanner.nextLine();
             var data = line.split(" ");
-            if (data[0].equalsIgnoreCase("quit")){
+            if (data[0].equalsIgnoreCase("quit") && data.length == 1){
                 break;
             }
             if(logged_in) {
                 logged_inProtocol(data);
-
             }
             else{
                 logged_outProtocol(data);
-
             }
         }
     }
