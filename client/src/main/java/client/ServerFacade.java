@@ -27,6 +27,9 @@ public class ServerFacade {
                 .uri(URI.create(URL + path))
                 .method(method, makeRequestBody(user));
         request.setHeader("Content-Type", "application/json");
+        if(authData != null){
+            request.setHeader("authorization", authData.authToken());
+        }
         HttpRequest built_request = request.build();
         HttpResponse<String> result = null;
         try {
