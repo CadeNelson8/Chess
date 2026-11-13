@@ -2,6 +2,7 @@ package client;
 
 import model.AuthData;
 import model.GameData;
+import model.ListGameResult;
 import model.UserData;
 
 import java.util.Scanner;
@@ -15,6 +16,8 @@ public class chessUI {
         facade = new ServerFacade(URL);
     }
 
+
+
     public void logged_inProtocol(String[] inputs){
         if (inputs[0].equalsIgnoreCase("help")){
             System.out.println("Commands: ");
@@ -26,45 +29,35 @@ public class chessUI {
             System.out.println("help - display commands");
             System.out.println();
         }
-        else if (inputs[0].equalsIgnoreCase("create")){
-            if (inputs.length >= 2){
-                try {
-                    GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                    facade.executeRequest(user, "post", "/game");
-                    System.out.println(user.gameName()+"  created");
-                }
-                catch (ResponseException e){
-                    System.out.println(e.getMessage());
-                }
+        else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
+            try {
+                GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
+                facade.executeRequest(user, "post", "/game");
+                System.out.println(user.gameName()+" created");
             }
-            else{
-                System.out.println("Expected: GAMENAME");
+            catch (ResponseException e){
+                System.out.println(e.getMessage());
             }
         }
-        else if (inputs[0].equalsIgnoreCase("list")){
+        else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
+            try {
+                ListGameResult games = facade.executeRequestList(null, "get", "/game");
+                System.out.println(games.games());
+            } catch (ResponseException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             //facade.executeRequest(inputs);
         }
-        else if (inputs[0].equalsIgnoreCase("join")){
-            if (inputs.length >= 3){
-                //facade.executeRequest(inputs);
-            }
-            else{
-                System.out.println("Expected: ID WHITE/BLACK");
-            }
-        }
-        else if (inputs[0].equalsIgnoreCase("logout")){
-            if (inputs.length >= 2) {
-                try {
-                    AuthData user = new AuthData(inputs[1], null);
-                    facade.executeRequest(user, "delete", "/session");
-                    System.out.println("Logout successful");
-                    logged_in = false;
-                } catch (ResponseException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            else{
-                System.out.println("Please enter who you are logging out");
+        else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
+            try {
+                AuthData user = new AuthData(inputs[1], null);
+                facade.executeRequest(user, "delete", "/session");
+                System.out.println("Logout successful");
+                logged_in = false;
+            } catch (ResponseException e) {
+                System.out.println(e.getMessage());
             }
         }
         else{
@@ -78,8 +71,8 @@ public class chessUI {
         }
     }
 
-    public void logged_outProtocol(String[] data){
-        if (data[0].equalsIgnoreCase("help")){
+    public void logged_outProtocol(String[] inputs){
+        if (inputs[0].equalsIgnoreCase("help")){
             System.out.println("Commands: ");
             System.out.println("register USERNAME PASSWORD EMAIL - to create an account");
             System.out.println("login USERNAME PASSWORD - to play a game");
@@ -87,35 +80,25 @@ public class chessUI {
             System.out.println("help - display commands");
             System.out.println();
         }
-        else if (data[0].equalsIgnoreCase("register")){
-            if (data.length >= 4){
-                try {
-                    UserData user = new UserData(data[1], data[2], data[3]);
-                    facade.executeRequest(user, "post", "/user");
-                    System.out.println("Welcome to chess, "+user.username()+"!");
-                }
-                catch (ResponseException e){
-                    System.out.println(e.getMessage());
-                }
+        else if (inputs[0].equalsIgnoreCase("register") && inputs.length == 4){
+            try {
+                UserData user = new UserData(inputs[1], inputs[2], inputs[3]);
+                facade.executeRequest(user, "post", "/user");
+                System.out.println("Welcome to chess, "+user.username()+"!");
             }
-            else{
-                System.out.println("Expected: USERNAME PASSWORD EMAIL");
+            catch (ResponseException e){
+                System.out.println(e.getMessage());
             }
         }
-        else if (data[0].equalsIgnoreCase("login")){
-            if (data.length >= 3){
-                try {
-                    UserData user = new UserData(data[1], data[2], null);
-                    facade.executeRequest(user, "post", "/session");
-                    System.out.println("Enjoy your game, "+user.username()+"!");
-                    logged_in = true;
-                }
-                catch (ResponseException e){
-                    System.out.println(e.getMessage());
-                }
+        else if (inputs[0].equalsIgnoreCase("login") && inputs.length == 3){
+            try {
+                UserData user = new UserData(inputs[1], inputs[2], null);
+                facade.executeRequest(user, "post", "/session");
+                System.out.println("Enjoy your game, "+user.username()+"!");
+                logged_in = true;
             }
-            else{
-                System.out.println("Expected: USERNAME PASSWORD");
+            catch (ResponseException e){
+                System.out.println(e.getMessage());
             }
         }
         else{
