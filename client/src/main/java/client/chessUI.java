@@ -1,9 +1,11 @@
 package client;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.ListGameResult;
 import model.UserData;
+import server.Color;
 import server.GameRequest;
 
 import java.util.Locale;
@@ -16,6 +18,10 @@ public class chessUI {
 
     public chessUI(String URL){
         facade = new ServerFacade(URL);
+    }
+
+    public void drawWhiteBoard(){
+
     }
 
     public void printGameList(ListGameResult entry){
@@ -57,9 +63,15 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             try {
-                GameRequest request = new GameRequest();
-                facade.executeRequestJoin(inputs[2], Integer.parseInt(inputs[1]), "put", "/game");
-                System.out.println(user.gameName()+" created");
+                GameRequest request = new GameRequest(null, 0);
+                if(inputs[2].equalsIgnoreCase("black")){
+                     request = new GameRequest(Color.BLACK, Integer.parseInt(inputs[1]));
+                }
+                else if(inputs[2].equalsIgnoreCase("white")){
+                     request = new GameRequest(Color.WHITE, Integer.parseInt(inputs[1]));
+                }
+                facade.executeRequestJoin(request, "put", "/game");
+                System.out.println(" created");
             }
             catch (ResponseException e){
                 System.out.println(e.getMessage());
@@ -67,6 +79,7 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 3){
             //facade.executeRequest(inputs);
+            drawWhiteBoard();
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
             try {

@@ -51,8 +51,7 @@ public class ServerFacade {
         return new Gson().fromJson(result.body(), ListGameResult.class);
     }
 
-    public void executeRequestJoin(String color, int gameID, String method, String path) throws ResponseException{
-        GameData user = GameData()
+    public void executeRequestJoin(Object user, String method, String path) throws ResponseException{
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(URL + path))
                 .method(method, makeRequestBody(user));
