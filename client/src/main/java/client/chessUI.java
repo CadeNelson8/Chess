@@ -122,9 +122,9 @@ public class chessUI {
             }
             whiteBoard();
         }
-        else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
+        else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 1){
             try {
-                AuthData user = new AuthData(inputs[1], null);
+                AuthData user = new AuthData(null, null);
                 facade.executeRequest(user, "delete", "/session");
                 System.out.println("Logout successful");
                 logged_in = false;
