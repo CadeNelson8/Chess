@@ -1,12 +1,8 @@
 package client;
 
 
-import model.AuthData;
-import model.GameData;
-import model.ListGameResult;
-import model.UserData;
-import server.Color;
-import server.GameRequest;
+import model.*;
+
 
 import java.util.Scanner;
 

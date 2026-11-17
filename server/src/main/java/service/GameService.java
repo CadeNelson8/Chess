@@ -7,8 +7,8 @@ import dataaccess.GameDataAccess;
 import dataaccess.UnauthorizedException;
 import dataaccess.sql.SqlGameDataAccess;
 import model.GameData;
-import server.Color;
-import server.GameRequest;
+import model.Color;
+import model.GameRequest;
 
 import java.util.Collection;
 
