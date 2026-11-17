@@ -62,7 +62,7 @@ public class ChessUI {
         else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
             try {
                 GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                facade.executeRequestList(user, "post", "/game", false);
+                facade.executeRequest(user, "post", "/game", false);
                 System.out.println(user.gameName()+" created");
             }
             catch (ResponseException e){
@@ -71,7 +71,7 @@ public class ChessUI {
         }
         else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
             try {
-                games = facade.executeRequestList(null, "get", "/game", false);
+                games = facade.executeRequest(null, "get", "/game", false);
                 printGameList(games);
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
