@@ -5,19 +5,61 @@ import java.nio.charset.StandardCharsets;
 
 public class WhiteBoard {
 
-    private static final int BOARD_SIZE_IN_SQUARES = 3;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
-
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_GREEN_BG = "\u001B[42m";
-    public static final String ANSI_BLACK_TEXT = "\u001B[30m"; // Optional: improves contrast
-
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
-        // Set foreground magenta (35) and background dark gray (100)
+        blackBoard();
 
+    }
+
+    public static void blackBoard(){
+        header(" hgfedcba ");
+        edge(1);
+        printWhiteSquare("r");
+        printBlackSquare("n");
+        printWhiteSquare("b");
+        printBlackSquare("q");
+        printWhiteSquare("k");
+        printBlackSquare("b");
+        printWhiteSquare("n");
+        printBlackSquare("r");
+        edge(1);
+        System.out.println("\u001b[0m");
+        edge(2);
+        for(int i = 0; i < 4; i++){
+            printBlackSquare("p");
+            printWhiteSquare("p");
+        }
+        edge(2);
+        System.out.println("\u001b[0m");
+        printEmptyRowW(3);
+        printEmptyRowB(4);
+        printEmptyRowW(5);
+        printEmptyRowB(6);
+        edge(7);
+        for(int i = 0; i < 4; i++){
+            printWhiteSquare("P");
+            printBlackSquare("P");
+        }
+        edge(7);
+        System.out.println("\u001b[0m");
+        edge(8);
+        printBlackSquare("R");
+        printWhiteSquare("N");
+        printBlackSquare("K");
+        printWhiteSquare("Q");
+        printBlackSquare("K");
+        printWhiteSquare("B");
+        printBlackSquare("N");
+        printWhiteSquare("R");
+        edge(8);
+        System.out.println("\u001b[0m");
+        header(" hgfedcba ");
+    }
+
+    public static void whiteBoard(){
+        header(" abcdefgh ");
+        edge(8);
         printWhiteSquare("R");
         printBlackSquare("N");
         printWhiteSquare("B");
@@ -26,22 +68,27 @@ public class WhiteBoard {
         printBlackSquare("B");
         printWhiteSquare("N");
         printBlackSquare("R");
+        edge(8);
         System.out.println("\u001b[0m");
-
+        edge(7);
         for(int i = 0; i < 4; i++){
             printBlackSquare("P");
             printWhiteSquare("P");
         }
+        edge(7);
         System.out.println("\u001b[0m");
-        printEmptyRowW();
-        printEmptyRowB();
-        printEmptyRowW();
-        printEmptyRowB();
+        printEmptyRowW(6);
+        printEmptyRowB(5);
+        printEmptyRowW(4);
+        printEmptyRowB(3);
+        edge(2);
         for(int i = 0; i < 4; i++){
             printWhiteSquare("p");
             printBlackSquare("p");
         }
+        edge(2);
         System.out.println("\u001b[0m");
+        edge(1);
         printBlackSquare("r");
         printWhiteSquare("n");
         printBlackSquare("b");
@@ -50,20 +97,41 @@ public class WhiteBoard {
         printWhiteSquare("b");
         printBlackSquare("n");
         printWhiteSquare("r");
-
+        edge(1);
+        System.out.println("\u001b[0m");
+        header(" abcdefgh ");
     }
-    private static void printEmptyRowB(){
-        for(int i = 0; i < 4; i++){
-            printBlackSquare(" ");
-            printWhiteSquare(" ");
+
+    private static void edge(int e){
+        System.out.print("\u001b[30;107m");
+        System.out.printf(" %s ", e);
+    }
+
+    private static void header(String s){
+        System.out.print("\u001b[30;107m");
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            System.out.printf(" %s ", c);
         }
         System.out.println("\u001b[0m");
     }
-    private static void printEmptyRowW(){
+
+    private static void printEmptyRowB(int row){
+        edge(row);
+        for(int i = 0; i < 4; i++){
+            printBlackSquare(" ");
+            printWhiteSquare(" ");
+        }
+        edge(row);
+        System.out.println("\u001b[0m");
+    }
+    private static void printEmptyRowW(int row){
+        edge(row);
         for(int i = 0; i < 4; i++){
             printWhiteSquare(" ");
             printBlackSquare(" ");
         }
+        edge(row);
         System.out.println("\u001b[0m");
     }
 

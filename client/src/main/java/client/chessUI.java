@@ -10,6 +10,9 @@ import server.GameRequest;
 
 import java.util.Scanner;
 
+import static client.WhiteBoard.blackBoard;
+import static client.WhiteBoard.whiteBoard;
+
 public class chessUI {
 
     private final ServerFacade facade;
@@ -81,7 +84,6 @@ public class chessUI {
                     return;
                 }
                 GameData progress = games.games().get(gameIndex);
-
                 if(inputs[2].equalsIgnoreCase("black")){
                      request = new GameRequest(Color.BLACK, progress.gameID());
                 }
@@ -89,15 +91,36 @@ public class chessUI {
                      request = new GameRequest(Color.WHITE, progress.gameID());
                 }
                 facade.executeRequestJoin(request, "put", "/game");
+                if(inputs[2].equalsIgnoreCase("black")){
+                    blackBoard();
+                }
+                else if(inputs[2].equalsIgnoreCase("white")){
+                    whiteBoard();
+                }
                 System.out.println("game joined");
             }
             catch (ResponseException e){
                 System.out.println(e.getMessage());
             }
         }
-        else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 3){
-            //facade.executeRequest(inputs);
-            //drawWhiteBoard();
+        else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 2){
+            if(games==null){
+                System.out.println("Please call list before joining a game");
+                return;
+            }
+            int gameIndex = -1;
+            try {
+                gameIndex = Integer.parseInt(inputs[1]) - 1;
+            }
+            catch(NumberFormatException e){
+                System.out.println("Please enter a valid ID");
+                return;
+            }
+            if(0 > gameIndex || games.games().size() < gameIndex){
+                System.out.println("Please enter a valid game ID");
+                return;
+            }
+            whiteBoard();
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
             try {
