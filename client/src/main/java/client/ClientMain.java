@@ -1,7 +1,5 @@
 package client;
 
-import chess.*;
-
 public class ClientMain {
 
     public static void main(String[] args) {
@@ -11,7 +9,7 @@ public class ClientMain {
         }
 
         try {
-            new chessUI(serverUrl).run();
+            new ChessUI(serverUrl).run();
 
         } catch (Throwable ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());

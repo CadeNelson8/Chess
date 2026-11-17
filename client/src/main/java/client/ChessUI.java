@@ -9,13 +9,13 @@ import java.util.Scanner;
 import static client.WhiteBoard.blackBoard;
 import static client.WhiteBoard.whiteBoard;
 
-public class chessUI {
+public class ChessUI {
 
     private final ServerFacade facade;
-    private boolean logged_in = false;
+    private static boolean loggedIn = false;
     private ListGameResult games;
 
-    public chessUI(String URL){
+    public ChessUI(String URL){
         facade = new ServerFacade(URL);
     }
 
@@ -31,21 +31,18 @@ public class chessUI {
         }
     }
 
-    public void logged_inProtocol(String[] inputs){
+    public void loggedInProtocol(String[] inputs){
         if (inputs[0].equalsIgnoreCase("help") && inputs.length == 1){
-            System.out.println("Commands: \n"
-                    +"create NAME - to start a new game\n"
-                    +"list - see all games\n"
-                    +"join ID WHITE/BLACK - join a game\n"
-                    +"observe ID - observe a game\n"
-                    +"logout - leave a game\n"
+            System.out.println("Commands: \n" +"create NAME - to start a new game\n"
+                    +"list - see all games\n" +"join ID WHITE/BLACK - join a game\n"
+                    +"observe ID - observe a game\n" +"logout - leave a game\n"
                     +"quit - leave the chess server\n"
                     +"help - display commands");
         }
         else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
             try {
                 GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                facade.executeRequestList(user, "post", "/game");
+                facade.executeRequest(user, "post", "/game", false);
                 System.out.println(user.gameName()+" created");
             }
             catch (ResponseException e){
@@ -54,7 +51,7 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
             try {
-                games = facade.executeRequestList(null, "get", "/game");
+                games = facade.executeRequest(null, "get", "/game", false);
                 printGameList(games);
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
@@ -86,7 +83,7 @@ public class chessUI {
                 else if(inputs[2].equalsIgnoreCase("white")){
                      request = new GameRequest(Color.WHITE, progress.gameID());
                 }
-                facade.executeRequest(request, "put", "/game");
+                facade.executeRequest(request, "put", "/game", true);
                 if(inputs[2].equalsIgnoreCase("black")){
                     blackBoard();
                 }
@@ -121,9 +118,9 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 1){
             try {
                 AuthData user = new AuthData(null, null);
-                facade.executeRequest(user, "delete", "/session");
+                facade.executeRequest(user, "delete", "/session", true);
                 System.out.println("Logout successful");
-                logged_in = false;
+                loggedIn = false;
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
             }
@@ -133,7 +130,7 @@ public class chessUI {
         }
     }
 
-    public void logged_outProtocol(String[] inputs){
+    public void loggedOutProtocol(String[] inputs){
         if (inputs[0].equalsIgnoreCase("help") && inputs.length == 1){
             System.out.println("Commands: \n"
                     +"register USERNAME PASSWORD EMAIL - to create an account\n"
@@ -144,7 +141,7 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("register") && inputs.length == 4){
             try {
                 UserData user = new UserData(inputs[1], inputs[2], inputs[3]);
-                facade.executeRequest(user, "post", "/user");
+                facade.executeRequest(user, "post", "/user", true);
                 System.out.println("Welcome to chess, "+user.username()+"!");
             }
             catch (ResponseException e){
@@ -154,9 +151,9 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("login") && inputs.length == 3){
             try {
                 UserData user = new UserData(inputs[1], inputs[2], null);
-                facade.executeRequest(user, "post", "/session");
+                facade.executeRequest(user, "post", "/session", true);
                 System.out.println("Enjoy your game, "+user.username()+"!");
-                logged_in = true;
+                loggedIn = true;
             }
             catch (ResponseException e){
                 System.out.println(e.getMessage());
@@ -172,15 +169,15 @@ public class chessUI {
         System.out.print("Welcome to 240 Chess. Type Help to get started");
         System.out.printf("%n[LOGGED_OUT] >>> ");
         while (true) {
-            if (!scanner.hasNextLine()) break;
+            if (!scanner.hasNextLine()){ break;}
             String line = scanner.nextLine();
             var data = line.split(" ");
             if (data[0].equalsIgnoreCase("quit") && data.length == 1){
                 break;
             }
-            if(logged_in) {
-                logged_inProtocol(data);
-                if(logged_in){
+            if(loggedIn) {
+                loggedInProtocol(data);
+                if(loggedIn){
                     System.out.printf("%n[LOGGED_IN] >>> ");
                 }
                 else{
@@ -188,8 +185,8 @@ public class chessUI {
                 }
             }
             else{
-                logged_outProtocol(data);
-                if(logged_in){
+                loggedOutProtocol(data);
+                if(loggedIn){
                     System.out.printf("%n[LOGGED_IN] >>> ");
                 }
                 else{

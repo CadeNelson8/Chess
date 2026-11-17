@@ -15,30 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServerFacadeTests {
 
-    private UserService userService;
-
-    private GameService gameService;
-    SqlUserDataAccess sqlUserDA = new SqlUserDataAccess();
-    SqlAuthDataAccess sqlAuth = new SqlAuthDataAccess();
-    SqlGameDataAccess sqlGame = new SqlGameDataAccess();
-    private static ServerFacade facade = null;
-    private static Server server;
-    AuthService authService = new AuthService(sqlAuth);
-
-
-    @BeforeEach
-    void setUp() {
-        GameService gameService = new GameService(sqlGame, authService);
-        this.gameService = gameService;
-        DatabaseManager.createDatabase();
-        UserService userService = new UserService(sqlUserDA, authService);
-        this.userService = userService;
-    }
-    @AfterEach
-    void clean(){
-        gameService.clearRequest();
-        userService.clearRequest();
-    }
+    private static Server server = null;
 
     @BeforeAll
     public static void init() {
