@@ -15,8 +15,8 @@ public class ChessUI {
     private static boolean loggedIn = false;
     private ListGameResult games;
 
-    public ChessUI(String URL){
-        facade = new ServerFacade(URL);
+    public ChessUI(String url){
+        facade = new ServerFacade(url);
     }
 
 
@@ -31,6 +31,26 @@ public class ChessUI {
         }
     }
 
+    public int verifyList(String[] inputs){
+        if(games==null){
+            System.out.println("Please call list before joining a game");
+            return-1;
+        }
+        int gameIndex = -1;
+        try {
+            gameIndex = Integer.parseInt(inputs[1]) - 1;
+        }
+        catch(NumberFormatException e){
+            System.out.println("Please enter a valid ID");
+            return-1;
+        }
+        if(0 > gameIndex || games.games().size() < gameIndex){
+            System.out.println("Please enter a valid game ID");
+            return-1;
+        }
+        return gameIndex;
+    }
+
     public void loggedInProtocol(String[] inputs){
         if (inputs[0].equalsIgnoreCase("help") && inputs.length == 1){
             System.out.println("Commands: \n" +"create NAME - to start a new game\n"
@@ -42,7 +62,7 @@ public class ChessUI {
         else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
             try {
                 GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                facade.executeRequest(user, "post", "/game", false);
+                facade.executeRequestList(user, "post", "/game", false);
                 System.out.println(user.gameName()+" created");
             }
             catch (ResponseException e){
@@ -51,7 +71,7 @@ public class ChessUI {
         }
         else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
             try {
-                games = facade.executeRequest(null, "get", "/game", false);
+                games = facade.executeRequestList(null, "get", "/game", false);
                 printGameList(games);
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
@@ -60,22 +80,7 @@ public class ChessUI {
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             try {
                 GameRequest request = new GameRequest(null, 0);
-                if(games==null){
-                    System.out.println("Please call list before joining a game");
-                    return;
-                }
-                int gameIndex = -1;
-                try {
-                    gameIndex = Integer.parseInt(inputs[1]) - 1;
-                }
-                catch(NumberFormatException e){
-                    System.out.println("Please enter a valid ID");
-                    return;
-                }
-                if(0 > gameIndex || games.games().size() < gameIndex){
-                    System.out.println("Please enter a valid game ID");
-                    return;
-                }
+                int gameIndex = verifyList(inputs);
                 GameData progress = games.games().get(gameIndex);
                 if(inputs[2].equalsIgnoreCase("black")){
                      request = new GameRequest(Color.BLACK, progress.gameID());
@@ -97,22 +102,7 @@ public class ChessUI {
             }
         }
         else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 2){
-            if(games==null){
-                System.out.println("Please call list before joining a game");
-                return;
-            }
-            int gameIndex = -1;
-            try {
-                gameIndex = Integer.parseInt(inputs[1]) - 1;
-            }
-            catch(NumberFormatException e){
-                System.out.println("Please enter a valid ID");
-                return;
-            }
-            if(0 > gameIndex || games.games().size() < gameIndex){
-                System.out.println("Please enter a valid game ID");
-                return;
-            }
+            verifyList(inputs);
             whiteBoard();
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 1){
