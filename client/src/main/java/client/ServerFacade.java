@@ -20,7 +20,6 @@ public class ServerFacade {
     public ServerFacade(String url){
         URL = url;
     }
-
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
@@ -30,7 +29,7 @@ public class ServerFacade {
                 .uri(URI.create(URL + path))
                 .method(method, makeRequestBody(user));
         request.setHeader("Content-Type", "application/json");
-        if(authData.authToken() != null && authData.username() != null){
+        if(authData.authToken() != null){
             request.setHeader("authorization", authData.authToken());
         }
         HttpRequest built_request = request.build();
@@ -49,56 +48,6 @@ public class ServerFacade {
             throw new ResponseException("other failure: " + status);
         }
         return new Gson().fromJson(result.body(), ListGameResult.class);
-    }
-
-    public void executeRequestJoin(Object user, String method, String path) throws ResponseException{
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(URL + path))
-                .method(method, makeRequestBody(user));
-        request.setHeader("Content-Type", "application/json");
-        if(authData != null){
-            request.setHeader("authorization", authData.authToken());
-        }
-        HttpRequest built_request = request.build();
-        HttpResponse<String> result = null;
-        try {
-            result =  client.send(built_request, HttpResponse.BodyHandlers.ofString());
-        } catch (Exception ex) {
-            throw new ResponseException (ex.getMessage());
-        }
-        int status = result.statusCode();
-        if (!isSuccessful(status)) {
-            var body = result.body();
-            if (body != null) {
-                throw ResponseException.fromJson(body);
-            }
-            throw new ResponseException("other failure: " + status);
-        }
-    }
-
-    public void executeRequestCreate(Object user, String method, String path) throws ResponseException{
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(URL + path))
-                .method(method, makeRequestBody(user));
-        request.setHeader("Content-Type", "application/json");
-        if(authData != null){
-            request.setHeader("authorization", authData.authToken());
-        }
-        HttpRequest built_request = request.build();
-        HttpResponse<String> result = null;
-        try {
-            result =  client.send(built_request, HttpResponse.BodyHandlers.ofString());
-        } catch (Exception ex) {
-            throw new ResponseException (ex.getMessage());
-        }
-        int status = result.statusCode();
-        if (!isSuccessful(status)) {
-            var body = result.body();
-            if (body != null) {
-                throw ResponseException.fromJson(body);
-            }
-            throw new ResponseException("other failure: " + status);
-        }
     }
 
     public void executeRequest(Object user, String method, String path) throws ResponseException{
@@ -124,7 +73,9 @@ public class ServerFacade {
             }
             throw new ResponseException("other failure: " + status);
         }
-        authData = new Gson().fromJson(result.body(), AuthData.class);
+        if((method.equals("post")||method.equals("delete"))&&(path.equals("/user")||path.equals("/session"))) {
+            authData = new Gson().fromJson(result.body(), AuthData.class);
+        }
     }
 
     private HttpRequest.BodyPublisher makeRequestBody(Object request) {

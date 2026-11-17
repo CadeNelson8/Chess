@@ -49,7 +49,7 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("create") && inputs.length == 2){
             try {
                 GameData user = new GameData(GameData.generateID(),null, null, inputs[1], null);
-                facade.executeRequestCreate(user, "post", "/game");
+                facade.executeRequestList(user, "post", "/game");
                 System.out.println(user.gameName()+" created");
             }
             catch (ResponseException e){
@@ -90,7 +90,7 @@ public class chessUI {
                 else if(inputs[2].equalsIgnoreCase("white")){
                      request = new GameRequest(Color.WHITE, progress.gameID());
                 }
-                facade.executeRequestJoin(request, "put", "/game");
+                facade.executeRequest(request, "put", "/game");
                 if(inputs[2].equalsIgnoreCase("black")){
                     blackBoard();
                 }
