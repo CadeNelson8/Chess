@@ -2,10 +2,6 @@ package client;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import static ui.EscapeSequences.*;
 
 public class WhiteBoard {
 

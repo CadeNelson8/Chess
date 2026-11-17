@@ -1,6 +1,6 @@
 package client;
 
-import chess.ChessGame;
+
 import model.AuthData;
 import model.GameData;
 import model.ListGameResult;
@@ -8,27 +8,27 @@ import model.UserData;
 import server.Color;
 import server.GameRequest;
 
-import java.util.Locale;
 import java.util.Scanner;
 
 public class chessUI {
 
     private final ServerFacade facade;
     private boolean logged_in = false;
+    private ListGameResult games;
 
     public chessUI(String URL){
         facade = new ServerFacade(URL);
     }
 
-    public void drawWhiteBoard(){
 
-    }
 
     public void printGameList(ListGameResult entry){
+        int i = 1;
         for(GameData game : entry.games()){
-            System.out.println("Name: "+game.gameName()
+            System.out.println(i+") Name: "+game.gameName()
                     +" White username: "+game.whiteUsername()
                     +" Black username: "+game.blackUsername());
+            i++;
         }
     }
 
@@ -55,7 +55,7 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("list") && inputs.length == 1){
             try {
-                ListGameResult games = facade.executeRequestList(null, "get", "/game");
+                games = facade.executeRequestList(null, "get", "/game");
                 printGameList(games);
             } catch (ResponseException e) {
                 System.out.println(e.getMessage());
@@ -64,14 +64,32 @@ public class chessUI {
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             try {
                 GameRequest request = new GameRequest(null, 0);
+                if(games==null){
+                    System.out.println("Please call list before joining a game");
+                    return;
+                }
+                int gameIndex = -1;
+                try {
+                    gameIndex = Integer.parseInt(inputs[1]) - 1;
+                }
+                catch(NumberFormatException e){
+                    System.out.println("Please enter a valid ID");
+                    return;
+                }
+                if(0 > gameIndex || games.games().size() < gameIndex){
+                    System.out.println("Please enter a valid game ID");
+                    return;
+                }
+                GameData progress = games.games().get(gameIndex);
+
                 if(inputs[2].equalsIgnoreCase("black")){
-                     request = new GameRequest(Color.BLACK, Integer.parseInt(inputs[1]));
+                     request = new GameRequest(Color.BLACK, progress.gameID());
                 }
                 else if(inputs[2].equalsIgnoreCase("white")){
-                     request = new GameRequest(Color.WHITE, Integer.parseInt(inputs[1]));
+                     request = new GameRequest(Color.WHITE, progress.gameID());
                 }
                 facade.executeRequestJoin(request, "put", "/game");
-                System.out.println(" created");
+                System.out.println("game joined");
             }
             catch (ResponseException e){
                 System.out.println(e.getMessage());
@@ -79,7 +97,7 @@ public class chessUI {
         }
         else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 3){
             //facade.executeRequest(inputs);
-            drawWhiteBoard();
+            //drawWhiteBoard();
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 2){
             try {
@@ -93,12 +111,6 @@ public class chessUI {
         }
         else{
             System.out.println("Please enter a valid input");
-        }
-        if(logged_in){
-            System.out.printf("%n[LOGGED_IN] >>> ");
-        }
-        else{
-            System.out.printf("%n[LOGGED_OUT] >>> ");
         }
     }
 
@@ -134,12 +146,6 @@ public class chessUI {
         else{
             System.out.println("Please enter a valid input");
         }
-        if(logged_in){
-            System.out.printf("%n[LOGGED_IN] >>> ");
-        }
-        else{
-            System.out.printf("%n[LOGGED_OUT] >>> ");
-        }
     }
 
     public void run() throws ResponseException{
@@ -155,9 +161,21 @@ public class chessUI {
             }
             if(logged_in) {
                 logged_inProtocol(data);
+                if(logged_in){
+                    System.out.printf("%n[LOGGED_IN] >>> ");
+                }
+                else{
+                    System.out.printf("%n[LOGGED_OUT] >>> ");
+                }
             }
             else{
                 logged_outProtocol(data);
+                if(logged_in){
+                    System.out.printf("%n[LOGGED_IN] >>> ");
+                }
+                else{
+                    System.out.printf("%n[LOGGED_OUT] >>> ");
+                }
             }
         }
     }
