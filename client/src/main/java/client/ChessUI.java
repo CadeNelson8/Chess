@@ -31,10 +31,10 @@ public class ChessUI {
         }
     }
 
-    public int verifyList(String[] inputs){
+    public boolean verifyList(String[] inputs){
         if(games==null){
             System.out.println("Please call list before joining a game");
-            return-1;
+            return false;
         }
         int gameIndex = -1;
         try {
@@ -42,13 +42,13 @@ public class ChessUI {
         }
         catch(NumberFormatException e){
             System.out.println("Please enter a valid ID");
-            return-1;
+            return false;
         }
-        if(0 > gameIndex || games.games().size() < gameIndex){
+        if(0 > gameIndex || games.games().size() <= gameIndex){
             System.out.println("Please enter a valid game ID");
-            return-1;
+            return false;
         }
-        return gameIndex;
+        return true;
     }
 
     public void loggedInProtocol(String[] inputs){
@@ -80,7 +80,11 @@ public class ChessUI {
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             try {
                 GameRequest request = new GameRequest(null, 0);
-                int gameIndex = verifyList(inputs);
+                if(verifyList(inputs)==false){
+                    return;
+                }
+                int gameIndex = -1;
+                gameIndex = Integer.parseInt(inputs[1]) - 1;
                 GameData progress = games.games().get(gameIndex);
                 if(inputs[2].equalsIgnoreCase("black")){
                      request = new GameRequest(Color.BLACK, progress.gameID());
@@ -88,7 +92,7 @@ public class ChessUI {
                 else if(inputs[2].equalsIgnoreCase("white")){
                      request = new GameRequest(Color.WHITE, progress.gameID());
                 }
-                facade.executeRequest(request, "put", "/game", true);
+                facade.executeRequest(request, "put", "/game", false);
                 if(inputs[2].equalsIgnoreCase("black")){
                     blackBoard();
                 }
@@ -102,7 +106,9 @@ public class ChessUI {
             }
         }
         else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 2){
-            verifyList(inputs);
+            if(verifyList(inputs)==false){
+                return;
+            }
             whiteBoard();
         }
         else if (inputs[0].equalsIgnoreCase("logout") && inputs.length == 1){
