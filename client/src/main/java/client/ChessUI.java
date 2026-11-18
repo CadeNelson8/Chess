@@ -80,7 +80,7 @@ public class ChessUI {
         else if (inputs[0].equalsIgnoreCase("join") && inputs.length == 3){
             try {
                 GameRequest request = new GameRequest(null, 0);
-                if(verifyList(inputs)==false){
+                if(!verifyList(inputs)){
                     return;
                 }
                 int gameIndex = -1;
@@ -106,7 +106,7 @@ public class ChessUI {
             }
         }
         else if (inputs[0].equalsIgnoreCase("observe") && inputs.length == 2){
-            if(verifyList(inputs)==false){
+            if(!verifyList(inputs)){
                 return;
             }
             whiteBoard();

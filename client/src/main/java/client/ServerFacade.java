@@ -14,8 +14,8 @@ public class ServerFacade {
     private String url = "http://localhost:";
     private final HttpClient client = HttpClient.newHttpClient();
     private AuthData authData;
-    public ServerFacade(String url){
-        this.url = url;
+    public ServerFacade(String url1){
+        this.url = url1;
     }
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
